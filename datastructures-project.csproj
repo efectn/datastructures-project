@@ -7,4 +7,8 @@
     <RootNamespace>datastructures_project</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Search\Tokenizer\" />
+  </ItemGroup>
+
 </Project>
