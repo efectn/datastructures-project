@@ -2,7 +2,7 @@
 
 - [ ] Create tokenizer.
     - [ ] Add Turkish stemmer support to tokenizer.
-    - [ ] Add Turkish stop words to tokenizer.
+    - [x] Add Turkish stop words to tokenizer.
     - [ ] Create unit-tests for tokenizer.
 - [ ] Create indexers.
     - [ ] Add inverted index.
