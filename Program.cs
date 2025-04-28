@@ -2,7 +2,7 @@ using datastructures_project.Search.Tokenizer;
 
 var tokenizer = new Tokenizer();
 
-var text = "ve ile  , test gelecek yaptığında bilgisayar?., test";
+var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yazı yaza yazar";
 var tokens = tokenizer.Tokenize(text);
 Console.WriteLine("Tokens:");
 

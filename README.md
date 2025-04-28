@@ -1,7 +1,7 @@
 # Todo List
 
 - [ ] Create tokenizer.
-    - [ ] Add Turkish stemmer support to tokenizer.
+    - [x] Add Turkish stemmer support to tokenizer.
     - [x] Add Turkish stop words to tokenizer.
     - [ ] Create unit-tests for tokenizer.
 - [ ] Create indexers.

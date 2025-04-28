@@ -1,22 +1,39 @@
 using System.Text.RegularExpressions;
+using datastructures_project.Search.Tokenizer.Snowball;
 
 namespace datastructures_project.Search.Tokenizer;
 
 public class Tokenizer
 {
-    private readonly string[] stop_words;
+    private readonly string[] stopWords;
+    private readonly string[] protectedWords;
+    private readonly TurkishStemmer stemmer;
     
-    public Tokenizer(string file = "Resources/stop-words.txt")
+    public Tokenizer(string stopWordsFile = "Resources/stop-words.txt", string protectedWordsFile = "Resources/stemmer-protected-words.txt")
     {
+        // Initialize stemmer
+        stemmer = new TurkishStemmer();
+        
         // Check if the file exists
-        if (!File.Exists(file))
+        if (!File.Exists(stopWordsFile))
         {
-            stop_words = new string[0];
+            stopWords = new string[0];
+        }
+        else
+        {
+            // Read the stop words from the file
+            var stopWordsText = File.ReadAllText(stopWordsFile);
+            stopWords = stopWordsText.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
         }
         
-        // Read the stop words from the file
-        var stopWordsText = File.ReadAllText(file);
-        stop_words = stopWordsText.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        // Check if the file exists
+        if (!File.Exists(protectedWordsFile))
+        {
+            protectedWords = new string[0];
+        } else {
+            var protectedWordsText = File.ReadAllText(protectedWordsFile);
+            protectedWords = protectedWordsText.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        }
     }
     
     public List<string> Tokenize(string text)
@@ -31,8 +48,9 @@ public class Tokenizer
         var tokens = text.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         // Remove stop words
-        var filteredTokens = tokens.Where(token => !stop_words.Contains(token)).ToList();
-
-        return filteredTokens;
+        var filteredTokens = tokens.Where(token => !stopWords.Contains(token)).ToList();
+        
+        // Stem the tokens and return the result
+        return filteredTokens.Select(token => !protectedWords.Contains(token) ? stemmer.Stem(token) : token).ToList();
     }
 }
