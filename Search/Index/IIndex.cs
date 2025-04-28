@@ -2,7 +2,6 @@ namespace datastructures_project.Search.Index;
 
 public interface IIndex
 {
-    Dictionary<string, HashSet<(int, int)>> Index { get; }
     void Add(int docId, string[] words);
     int DocumentCount();
     int DocumentWordsCount(int docId);

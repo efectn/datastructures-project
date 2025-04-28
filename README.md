@@ -7,7 +7,7 @@
 - [ ] Create indexers.
     - [x] Add inverted index.
       - [ ] Create unit-tests and benchmarks.
-    - [ ] Add forward index.
+    - [x] Add forward index.
       - [ ] Create unit-tests and benchmarks.
     - [ ] Store indexed data in SQL or NoSQL database.
       - [ ] Create unit-tests and benchmarks.
