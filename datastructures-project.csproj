@@ -7,4 +7,24 @@
     <RootNamespace>datastructures_project</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\appsettings.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\datastructures-project.deps.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\datastructures-project.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\datastructures-project.staticwebassets.endpoints.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\Tests.deps.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\Tests.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\Tests\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="Tests\bin\Debug\net9.0\Tests\obj\Tests.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="Tests\obj\Debug\net9.0\Tests.sourcelink.json" />
+    <_ContentIncludedByDefault Remove="Tests\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="Tests\obj\Tests.csproj.nuget.dgspec.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+  </ItemGroup>
+
 </Project>

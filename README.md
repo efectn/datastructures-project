@@ -1,11 +1,11 @@
 # Todo List
 
-- [ ] Create tokenizer.
+- [x] Create tokenizer.
     - [x] Add Turkish stemmer support to tokenizer.
     - [x] Add Turkish stop words to tokenizer.
     - [ ] Create unit-tests for tokenizer.
 - [ ] Create indexers.
-    - [ ] Add inverted index.
+    - [x] Add inverted index.
       - [ ] Create unit-tests and benchmarks.
     - [ ] Add forward index.
       - [ ] Create unit-tests and benchmarks.

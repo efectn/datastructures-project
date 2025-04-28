@@ -1,0 +1,82 @@
+namespace datastructures_project.Search.Index;
+
+public class InvertedIndex : IIndex
+{
+    private readonly Dictionary<string, HashSet<(int, int)>> _index; // term -> (docId, termFrequency)
+    public Dictionary<string, HashSet<(int, int)>> Index => _index;
+    
+    public InvertedIndex()
+    {
+        _index = new Dictionary<string, HashSet<(int, int)>>();
+    }
+
+    public void Add(int docId, string[] words)
+    {
+        // Count the term frequency of each word in the document and remove duplications
+        var newWords = words.Select(word => (word, words.Count(w => w == word)))
+            .Distinct()
+            .ToArray();
+        
+        foreach (var (word, termFrequency) in newWords) 
+        {
+            if (!_index.ContainsKey(word))
+            {
+                _index[word] = new HashSet<(int, int)>();
+            }
+            _index[word].Add((docId, termFrequency));
+        }
+    }
+    
+    public int DocumentCount()
+    {
+        return _index.Values.SelectMany(x => x).Select(p => p.Item1).Distinct().Count();
+    }
+    
+    public int DocumentWordsCount(int docId)
+    {
+        return _index.Values.SelectMany(x => x).Where(p => p.Item1 == docId).Select(p => p.Item2).Sum();
+    }
+    
+    public (int, int)[]? WordDocuments(string word)
+    {
+        if (_index.ContainsKey(word))
+        {
+            return _index[word].ToArray();
+        }
+
+        return null;
+    }
+    
+    public int DocumentLength(int docId)
+    {
+        var length = 0;
+        foreach (var (word, docs) in _index)
+        {
+            if (docs.Any(d => d.Item1 == docId))
+            {
+                length += word.Length * docs.First(d => d.Item1 == docId).Item2;
+            }
+        }
+        
+        return length;
+    }
+    
+    public List<int> DocumentIds()
+    {
+        return _index.Values.SelectMany(x => x).Select(p => p.Item1).Distinct().ToList();
+    }
+    
+    public List<string> Tokens(int docId)
+    {
+        var tokens = new List<string>();
+        foreach (var (word, docs) in _index)
+        {
+            if (docs.Any(d => d.Item1 == docId))
+            {
+                tokens.AddRange(Enumerable.Repeat(word, docs.First(d => d.Item1 == docId).Item2));
+            }
+        }
+        
+        return tokens;
+    }
+}
