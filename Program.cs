@@ -109,6 +109,20 @@ foreach (var result in wildcardResults3)
     Console.WriteLine(result);
 }
 
+Console.WriteLine("Levenstein distance search");
+var levenshteinResults = trie.LevenshteinSearch("ypz", 2);
+foreach (var result in levenshteinResults)
+{
+    Console.WriteLine(result);
+}
+
+Console.WriteLine("Levenstein distance search");
+levenshteinResults = trie.LevenshteinSearch("yaz", 2);
+foreach (var result in levenshteinResults)
+{
+    Console.WriteLine(result);
+}
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 

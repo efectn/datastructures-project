@@ -19,7 +19,7 @@
   - [x] Implement autocompletion.
   - [x] Add support for wildcard search queries.
   - [ ] Add unit-tests.
-- [ ] Add Levenshtein distance algorithm for word similarity check.
+- [x] Add Levenshtein distance algorithm for word similarity check.
   - [ ] Create unit-tests.
 - [ ] Backend & frontend.
   - [ ] Add backend using ASP.NET Core.

@@ -1,3 +1,5 @@
+using datastructures_project.Search.Distance;
+
 namespace datastructures_project.Search.Trie;
 
 public class Node
@@ -104,5 +106,25 @@ public class Trie : ITrie
 
             _wildcardSearch(node.children[currentChar], pattern, index + 1, current + currentChar, results);
         }
+    }
+    
+    public List<string> LevenshteinSearch(string word, int maxDistance = 2)
+    {
+        var results = new List<string>();
+        _levenshteinSearch(_head, word, "", 0, maxDistance, results);
+        
+        return results;
+    }
+    
+    private void _levenshteinSearch(Node node, string word, string currentWord, int depth, int maxDistance,
+        List<string> results)
+    {
+        if (node._isEnd && LevenshteinDistance.Distance(word, currentWord) <= maxDistance)
+            results.Add(currentWord);
+
+        if (depth >= word.Length + maxDistance) return; // Remove irrelevant paths
+
+        foreach (var kvp in node.children)
+            _levenshteinSearch(kvp.Value, word, currentWord + kvp.Key, depth + 1, maxDistance, results);
     }
 }

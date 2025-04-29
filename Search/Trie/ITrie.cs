@@ -6,4 +6,5 @@ public interface ITrie
     bool SearchWord(string word);
     List<string> GetWords(string prefix);
     List<string> WildcardSearch(string pattern);
+    List<string> LevenshteinSearch(string word, int maxDistance = 2);
 }
