@@ -16,14 +16,17 @@
   - [x] Implement TF-IDF.
   - [ ] Create unit-tests and benchmarks, compare them with each other.
 - [ ] Add support for Trie data structure.
-  - [ ] Implement autocompletion.
+  - [x] Implement autocompletion.
   - [ ] Add support for wildcard search queries.
   - [ ] Add unit-tests.
 - [ ] Add Levenshtein distance algorithm for word similarity check.
-  - [ ] Create unit-tests and benchmarks.
+  - [ ] Create unit-tests.
 - [ ] Backend & frontend.
   - [ ] Add backend using ASP.NET Core.
   - [ ] Add simple frontend using the files in static directory with Scriban template engine.
+    - [ ] Add support for search queries.
+    - [ ] Add support for autocompletion.
+    - [ ] Add support for adding/removing entries from index.
   - [ ] Add logging support.
   - [ ] Prometheus integration for tracing.
   - [ ] Docker integration.

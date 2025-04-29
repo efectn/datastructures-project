@@ -1,11 +1,13 @@
 using datastructures_project.Search.Index;
 using datastructures_project.Search.Score;
 using datastructures_project.Search.Tokenizer;
+using datastructures_project.Search.Trie;
 
 var tokenizer = new Tokenizer();
 
-var invertedIndex = new InvertedIndex();
-var forwardIndex = new ForwardIndex();
+var trie = new Trie();
+var invertedIndex = new InvertedIndex(trie);
+var forwardIndex = new ForwardIndex(trie);
 
 var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yazı yaza yazar test test test";
 var tokens = tokenizer.Tokenize(text);
@@ -78,6 +80,15 @@ foreach (var freq in freqs)
 {
     Console.Write("{0} => {1}, ", freq.Key, freq.Value);
 }
+
+Console.WriteLine("trie autocompleteion for ya:");
+var trieResults = trie.GetWords("ya");
+foreach (var result in trieResults)
+{
+    Console.WriteLine(result);
+}
+
+Console.WriteLine("{0}, {1}", trie.SearchWord("ma"), trie.SearchWord("masa"));
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();

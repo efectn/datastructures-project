@@ -1,13 +1,17 @@
+using datastructures_project.Search.Trie;
+
 namespace datastructures_project.Search.Index;
 
 public class ForwardIndex : IIndex
 {
     private readonly Dictionary<int, HashSet<(string, int)>> _index; // term -> (word, termFrequency)
+    private readonly ITrie _trie;
     public Dictionary<int, HashSet<(string, int)>> Index => _index;
     
-    public ForwardIndex()
+    public ForwardIndex(ITrie trie)
     {
         _index = new Dictionary<int, HashSet<(string, int)>>();
+        _trie = trie;
     }
     
     public void Add(int docId, string[] words)
@@ -19,6 +23,9 @@ public class ForwardIndex : IIndex
         
         foreach (var (word, termFrequency) in newWords) 
         {
+            // Add the word to the trie
+            _trie.AddWord(word);
+            
             if (!_index.ContainsKey(docId))
             {
                 _index[docId] = new HashSet<(string, int)>();

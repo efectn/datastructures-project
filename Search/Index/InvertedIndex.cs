@@ -1,13 +1,16 @@
 namespace datastructures_project.Search.Index;
 
+using datastructures_project.Search.Trie;
 public class InvertedIndex : IIndex
 {
     private readonly Dictionary<string, HashSet<(int, int)>> _index; // term -> (docId, termFrequency)
+    private readonly ITrie _trie;
     public Dictionary<string, HashSet<(int, int)>> Index => _index;
     
-    public InvertedIndex()
+    public InvertedIndex(ITrie trie)
     {
         _index = new Dictionary<string, HashSet<(int, int)>>();
+        _trie = trie;
     }
 
     public void Add(int docId, string[] words)
@@ -19,6 +22,9 @@ public class InvertedIndex : IIndex
         
         foreach (var (word, termFrequency) in newWords) 
         {
+            // Add the word to the trie
+            _trie.AddWord(word);
+            
             if (!_index.ContainsKey(word))
             {
                 _index[word] = new HashSet<(int, int)>();
