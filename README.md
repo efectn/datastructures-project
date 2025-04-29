@@ -17,7 +17,7 @@
   - [ ] Create unit-tests and benchmarks, compare them with each other.
 - [ ] Add support for Trie data structure.
   - [x] Implement autocompletion.
-  - [ ] Add support for wildcard search queries.
+  - [x] Add support for wildcard search queries.
   - [ ] Add unit-tests.
 - [ ] Add Levenshtein distance algorithm for word similarity check.
   - [ ] Create unit-tests.

@@ -56,17 +56,53 @@ public class Trie : ITrie
             tmp = tmp.children[character];
         }
 
-        dfs(tmp, prefix, words);
+        _dfs(tmp, prefix, words);
         return words;
     }
     
-    private void dfs(Node node, string prefix, List<string> words)
+    private void _dfs(Node node, string prefix, List<string> words)
     {
         if (node._isEnd) words.Add(prefix);
 
         foreach (var (character, child) in node.children)
         {
-            dfs(child, prefix + character, words);
+            _dfs(child, prefix + character, words);
+        }
+    }
+    
+    public List<string> WildcardSearch(string pattern)
+    {
+        var results = new List<string>();
+        _wildcardSearch(_head, pattern, 0, "", results);
+        
+        return results;
+    }
+
+    private void _wildcardSearch(Node node, string pattern, int index, string current, List<string> results)
+    {
+        if (index == pattern.Length)
+        {
+            if (node._isEnd) results.Add(current);
+            return;
+        }
+
+        char currentChar = pattern[index];
+        if (currentChar == '*')
+        { 
+            // skip the '*'
+            _wildcardSearch(node, pattern, index + 1, current, results);
+            
+            // lookup all children nodes
+            foreach (var (childChar, childNode) in node.children)
+            {
+                _wildcardSearch(childNode, pattern, index, current + childChar, results);
+            }
+        }
+        else
+        {
+            if (!node.children.ContainsKey(currentChar)) return;
+
+            _wildcardSearch(node.children[currentChar], pattern, index + 1, current + currentChar, results);
         }
     }
 }

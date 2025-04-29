@@ -9,7 +9,7 @@ var trie = new Trie();
 var invertedIndex = new InvertedIndex(trie);
 var forwardIndex = new ForwardIndex(trie);
 
-var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yazı yaza yazar test test test";
+var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yanar yazı yaza yazar test test test";
 var tokens = tokenizer.Tokenize(text);
 Console.WriteLine("Tokens:");
 
@@ -89,6 +89,25 @@ foreach (var result in trieResults)
 }
 
 Console.WriteLine("{0}, {1}", trie.SearchWord("ma"), trie.SearchWord("masa"));
+
+Console.WriteLine("wildcard search");
+var wildcardResults = trie.WildcardSearch("yaz*");
+foreach (var result in wildcardResults)
+{
+    Console.WriteLine(result);
+}
+Console.WriteLine("wildcard search");
+var wildcardResults2 = trie.WildcardSearch("*a*ar");
+foreach (var result in wildcardResults2)
+{
+    Console.WriteLine(result);
+}
+Console.WriteLine("wildcard search");
+var wildcardResults3 = trie.WildcardSearch("yazar");
+foreach (var result in wildcardResults3)
+{
+    Console.WriteLine(result);
+}
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
