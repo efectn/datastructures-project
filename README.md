@@ -13,7 +13,7 @@
       - [ ] Create unit-tests and benchmarks.
 - [ ] Add search scoring algorithms.
   - [ ] Implement BM25.
-  - [ ] Implement TF-IDF.
+  - [x] Implement TF-IDF.
   - [ ] Create unit-tests and benchmarks, compare them with each other.
 - [ ] Add support for Trie data structure.
   - [ ] Implement autocompletion.

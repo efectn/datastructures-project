@@ -1,11 +1,15 @@
 using datastructures_project.Search.Index;
+using datastructures_project.Search.Score;
 using datastructures_project.Search.Tokenizer;
 
 var tokenizer = new Tokenizer();
+
 var invertedIndex = new InvertedIndex();
 var forwardIndex = new ForwardIndex();
 
-var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yazı yaza yazar";
+var tfidf = new TFIDF(invertedIndex);
+
+var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yazı yaza yazar test test test";
 var tokens = tokenizer.Tokenize(text);
 Console.WriteLine("Tokens:");
 
@@ -51,6 +55,18 @@ Console.WriteLine("document 1 length: {0}", forwardIndex.DocumentLength(2));
 Console.WriteLine("document ids: {0}", string.Join(", ", forwardIndex.DocumentIds()));
 Console.WriteLine("document 0 tokens: {0}", string.Join(", ", forwardIndex.Tokens(1)));
 Console.WriteLine("document 1 tokens: {0}", string.Join(", ", forwardIndex.Tokens(2)));
+
+var freqs = tfidf.Calculate(new []{
+    "test", "bilgisayar", "yaz"
+});
+
+Console.WriteLine("freqs:");
+
+foreach (var freq in freqs)
+{
+    Console.Write("{0} => {1}, ", freq.Key, freq.Value);
+}
+
 
 
 var builder = WebApplication.CreateBuilder(args);
