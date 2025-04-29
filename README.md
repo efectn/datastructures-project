@@ -12,7 +12,7 @@
     - [ ] Store indexed data in SQL or NoSQL database.
       - [ ] Create unit-tests and benchmarks.
 - [ ] Add search scoring algorithms.
-  - [ ] Implement BM25.
+  - [x] Implement BM25.
   - [x] Implement TF-IDF.
   - [ ] Create unit-tests and benchmarks, compare them with each other.
 - [ ] Add support for Trie data structure.

@@ -7,8 +7,6 @@ var tokenizer = new Tokenizer();
 var invertedIndex = new InvertedIndex();
 var forwardIndex = new ForwardIndex();
 
-var tfidf = new TFIDF(invertedIndex);
-
 var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yazı yaza yazar test test test";
 var tokens = tokenizer.Tokenize(text);
 Console.WriteLine("Tokens:");
@@ -56,6 +54,9 @@ Console.WriteLine("document ids: {0}", string.Join(", ", forwardIndex.DocumentId
 Console.WriteLine("document 0 tokens: {0}", string.Join(", ", forwardIndex.Tokens(1)));
 Console.WriteLine("document 1 tokens: {0}", string.Join(", ", forwardIndex.Tokens(2)));
 
+var tfidf = new TFIDF(invertedIndex);
+var bm25 = new BM25(invertedIndex);
+
 var freqs = tfidf.Calculate(new []{
     "test", "bilgisayar", "yaz"
 });
@@ -67,7 +68,16 @@ foreach (var freq in freqs)
     Console.Write("{0} => {1}, ", freq.Key, freq.Value);
 }
 
+freqs = bm25.Calculate(new []{
+    "test", "bilgisayar", "yaz"
+});
 
+Console.WriteLine("freqs:");
+
+foreach (var freq in freqs)
+{
+    Console.Write("{0} => {1}, ", freq.Key, freq.Value);
+}
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();

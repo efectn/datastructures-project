@@ -2,7 +2,7 @@ using datastructures_project.Search.Index;
 
 namespace datastructures_project.Search.Score;
 
-public class TFIDF
+public class TFIDF: IScore
 {
     private readonly IIndex _index;
 
