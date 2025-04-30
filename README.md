@@ -22,7 +22,7 @@
 - [x] Add Levenshtein distance algorithm for word similarity check.
   - [ ] Create unit-tests.
 - [ ] Backend & frontend.
-  - [ ] Add backend using ASP.NET Core.
+  - [x] Add backend using ASP.NET Core.
   - [ ] Add simple frontend using the files in static directory with Scriban template engine.
     - [ ] Add support for search queries.
     - [ ] Add support for autocompletion.

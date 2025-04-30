@@ -7,6 +7,11 @@ public class InvertedIndex : IIndex
     private readonly ITrie _trie;
     public Dictionary<string, HashSet<(int, int)>> Index => _index;
     
+    public ITrie Trie
+    {
+        get => _trie;
+    }
+    
     public InvertedIndex(ITrie trie)
     {
         _index = new Dictionary<string, HashSet<(int, int)>>();
@@ -43,14 +48,14 @@ public class InvertedIndex : IIndex
         return _index.Values.SelectMany(x => x).Where(p => p.Item1 == docId).Select(p => p.Item2).Sum();
     }
     
-    public (int, int)[]? WordDocuments(string word)
+    public (int, int)[] WordDocuments(string word)
     {
         if (_index.ContainsKey(word))
         {
             return _index[word].ToArray();
         }
 
-        return null;
+        return new (int, int)[]{};
     }
     
     public int DocumentLength(int docId)

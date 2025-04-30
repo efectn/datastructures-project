@@ -1,10 +1,13 @@
 using datastructures_project.Search.Index;
+using datastructures_project.Search.Trie;
 
 namespace datastructures_project.Search.Score;
 
 public class TFIDF: IScore
 {
     private readonly IIndex _index;
+    
+    public ITrie Trie => _index.Trie;
 
     public TFIDF(IIndex index)
     {

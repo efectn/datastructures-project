@@ -1,4 +1,5 @@
 using datastructures_project.Search.Index;
+using datastructures_project.Search.Trie;
 
 namespace datastructures_project.Search.Score;
 
@@ -8,6 +9,8 @@ public class BM25 : IScore
     private readonly double _k1;
     private readonly double _b;
     private readonly double _averageDocLength;
+    
+    public ITrie Trie => _index.Trie;
 
     public BM25(IIndex index)
     {

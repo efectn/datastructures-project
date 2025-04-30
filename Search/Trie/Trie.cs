@@ -127,4 +127,24 @@ public class Trie : ITrie
         foreach (var kvp in node.children)
             _levenshteinSearch(kvp.Value, word, currentWord + kvp.Key, depth + 1, maxDistance, results);
     }
+
+    public List<string> GetTokens(List<string> tokens)
+    {
+        var newTokens = new List<string>();
+
+        foreach (var token in tokens)
+        {
+            // Check wildcard, then levenshtein
+            if (token.Contains("*"))
+            {
+                newTokens.AddRange(WildcardSearch(token));
+            }
+            else
+            {
+                newTokens.AddRange(LevenshteinSearch(token, 2)); // TODO: let maxdistance be configurable from the config.
+            }
+        }
+
+        return newTokens;
+    }
 }

@@ -3,7 +3,7 @@ using datastructures_project.Search.Tokenizer.Snowball;
 
 namespace datastructures_project.Search.Tokenizer;
 
-public class Tokenizer
+public class Tokenizer : ITokenizer
 {
     private readonly string[] stopWords;
     private readonly string[] protectedWords;

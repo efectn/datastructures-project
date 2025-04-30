@@ -8,6 +8,11 @@ public class ForwardIndex : IIndex
     private readonly ITrie _trie;
     public Dictionary<int, HashSet<(string, int)>> Index => _index;
     
+    public ITrie Trie
+    {
+        get => _trie;
+    }
+    
     public ForwardIndex(ITrie trie)
     {
         _index = new Dictionary<int, HashSet<(string, int)>>();
@@ -48,7 +53,7 @@ public class ForwardIndex : IIndex
         return 0;
     }
     
-    public (int, int)[]? WordDocuments(string word)
+    public (int, int)[] WordDocuments(string word)
     {
         var result = new List<(int, int)>();
         foreach (var (docId, docWords) in _index)
