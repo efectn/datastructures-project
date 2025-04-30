@@ -4,6 +4,7 @@ using datastructures_project.Search.Index;
 using datastructures_project.Search.Score;
 using datastructures_project.Search.Tokenizer;
 using datastructures_project.Search.Trie;
+using datastructures_project.Template;
 
 var documents = new Dictionary<int, Document>
 {
@@ -174,6 +175,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ITokenizer>(tokenizer);
 builder.Services.AddSingleton<IScore>(bm25);
 builder.Services.AddSingleton<IDocumentService>(documentService);
+
+builder.Services.AddSingleton(provider =>
+{
+    var linkGenerator = provider.GetRequiredService<LinkGenerator>();
+
+    return new ScribanTemplateService(linkGenerator,
+        Path.Combine(Directory.GetCurrentDirectory(), "Views"),
+        Path.Combine(Directory.GetCurrentDirectory(), "Views", "Layout.html")
+    );
+});
 
 // Create app instance
 var app = builder.Build();
