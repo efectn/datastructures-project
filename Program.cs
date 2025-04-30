@@ -6,6 +6,9 @@ using datastructures_project.Search.Tokenizer;
 using datastructures_project.Search.Trie;
 using datastructures_project.Template;
 
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+
 var documents = new Dictionary<int, Document>
 {
     { 0, new Document("Sağlıklı Beslenme Rehberi", "https://example.com/saglikli-beslenme", 
@@ -186,8 +189,22 @@ builder.Services.AddSingleton(provider =>
     );
 });
 
+// Create OpenTelemetry instance
+// Add prometheus metrics exporter
+var openTelemetryBuilder = builder.Services.AddOpenTelemetry();
+
+openTelemetryBuilder.ConfigureResource(resource => resource
+    .AddService(builder.Environment.ApplicationName));
+
+openTelemetryBuilder.WithMetrics(metrics => metrics
+    // .AddAspNetCoreInstrumentation()
+    .AddMeter("MyApp.Metrics")
+    .AddRuntimeInstrumentation()
+    .AddPrometheusExporter());
+
 // Create app instance
 var app = builder.Build();
+app.MapPrometheusScrapingEndpoint();
 app.UseStaticFiles();
 
 // Register search handlers

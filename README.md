@@ -29,7 +29,7 @@
     - [ ] Add support for adding/removing entries from index.
   - [ ] Add logging support.
   - [ ] Add configuration files.
-  - [ ] Prometheus integration for tracing.
+  - [x] Prometheus integration for tracing.
     - [ ] Visualise the data with Grafana.
   - [x] Docker integration.
 - [ ] Implement hashtable functions.

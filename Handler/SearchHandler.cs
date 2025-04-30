@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using datastructures_project.Document;
 using datastructures_project.Dto;
 using datastructures_project.Search.Score;
@@ -8,6 +9,10 @@ namespace datastructures_project.Handler;
 
 public class SearchHandler
 {
+    public static Meter meter = new("MyApp.Metrics", "1.0");
+    public static Counter<long> searchCounter = meter.CreateCounter<long>("search_counter", "count", "Number of search requests");
+    public static Counter<long> autocompleteCounter = meter.CreateCounter<long>("autocomplete_counter", "count", "Number of autocomplete requests");
+    
     public static void RegisterHandlers(WebApplication app)
     {
         // Register API routes
@@ -22,6 +27,7 @@ public class SearchHandler
 
     public static IResult _apiHandler(HttpContext ctx, ITokenizer tokenizer, IScore score, IDocumentService documentService)
     {
+        // Get the query parameters
         var query = ctx.Request.Query["q"];
         if (string.IsNullOrEmpty(query))
         {
@@ -40,6 +46,10 @@ public class SearchHandler
     }
 
     public static IResult _autocompleteHandler(HttpContext ctx, IScore score) {
+        // Increment the autocomplete counter
+        autocompleteCounter.Add(1);
+        
+        // Get the query parameters
         var query = ctx.Request.Form["query"].ToString();
         if (string.IsNullOrEmpty(query))
         {
@@ -51,6 +61,7 @@ public class SearchHandler
 
     public static IResult _indexHandler(HttpContext ctx, ScribanTemplateService scribanService)
     {
+        // Render the index page
         return Results.Content(scribanService.RenderWithLayout("Index", new Dictionary<string, object>
         {
             {"Title", "Anasayfa"},
@@ -60,6 +71,7 @@ public class SearchHandler
     public static IResult _searchHtmlHandler(HttpContext ctx, ITokenizer tokenizer, IScore score,
         IDocumentService documentService, ScribanTemplateService scribanService)
     {
+        // Get the query parameters
         var query = ctx.Request.Query["q"];
         if (string.IsNullOrEmpty(query))
         {
@@ -78,6 +90,9 @@ public class SearchHandler
 
     public static List<SearchResponseDto>? _searchHandler(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query)
     {
+        // Increment the search counter
+        searchCounter.Add(1);
+        
         // Tokenize the query
         var tokens = tokenizer.Tokenize(query);
         if (tokens.Count == 0)
