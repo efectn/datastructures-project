@@ -28,8 +28,10 @@
     - [x] Add support for autocompletion.
     - [ ] Add support for adding/removing entries from index.
   - [ ] Add logging support.
+  - [ ] Add configuration files.
   - [ ] Prometheus integration for tracing.
-  - [ ] Docker integration.
+    - [ ] Visualise the data with Grafana.
+  - [x] Docker integration.
 - [ ] Implement hashtable functions.
   - [ ] Separate chaining.
   - [ ] Linear probing.
