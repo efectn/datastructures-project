@@ -188,8 +188,7 @@ builder.Services.AddSingleton(provider =>
 
 // Create app instance
 var app = builder.Build();
-
-app.MapGet("/", () => "Hello World!");
+app.UseStaticFiles();
 
 // Register search handlers
 SearchHandler.RegisterHandlers(app);

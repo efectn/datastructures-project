@@ -24,7 +24,7 @@
 - [ ] Backend & frontend.
   - [x] Add backend using ASP.NET Core.
   - [ ] Add simple frontend using the files in static directory with Scriban template engine.
-    - [ ] Add support for search queries.
+    - [x] Add support for search queries.
     - [ ] Add support for autocompletion.
     - [ ] Add support for adding/removing entries from index.
   - [ ] Add logging support.
