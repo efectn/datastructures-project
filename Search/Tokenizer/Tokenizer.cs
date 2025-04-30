@@ -39,7 +39,7 @@ public class Tokenizer : ITokenizer
     public List<string> Tokenize(string text)
     {
         // Normalize the text to lowercase
-        text = text.ToLower();
+        text = text.ToLower().Trim();
 
         // Remove punctuation and special characters
         text = Regex.Replace(text, @"[^\w\s]", "");

@@ -27,7 +27,7 @@
     - [x] Add support for search queries.
     - [x] Add support for autocompletion.
     - [ ] Add support for adding/removing entries from index.
-  - [ ] Add logging support.
+  - [x] Add logging support.
   - [ ] Add configuration files.
   - [x] Prometheus integration for tracing.
     - [ ] Visualise the data with Grafana.

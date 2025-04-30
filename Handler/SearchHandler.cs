@@ -25,7 +25,7 @@ public class SearchHandler
         app.MapGet("/", _indexHandler).WithName("index");
     }
 
-    public static IResult _apiHandler(HttpContext ctx, ITokenizer tokenizer, IScore score, IDocumentService documentService)
+    public static IResult _apiHandler(HttpContext ctx, ITokenizer tokenizer, IScore score, IDocumentService documentService, ILogger<SearchHandler> logger)
     {
         // Get the query parameters
         var query = ctx.Request.Query["q"];
@@ -33,6 +33,10 @@ public class SearchHandler
         {
             return Results.BadRequest("q property is required!");
         }
+        
+        // Log the request
+        logger.LogInformation("Search request received for \"{query}\" query on {timestamp} at {path}",
+            query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
         
         // Perform the search
         var searchResults = _searchHandler(score, tokenizer, documentService, query);
@@ -45,7 +49,7 @@ public class SearchHandler
         return Results.Ok(searchResults);
     }
 
-    public static IResult _autocompleteHandler(HttpContext ctx, IScore score) {
+    public static IResult _autocompleteHandler(HttpContext ctx, IScore score, ILogger<SearchHandler> logger) {
         // Increment the autocomplete counter
         autocompleteCounter.Add(1);
         
@@ -55,6 +59,10 @@ public class SearchHandler
         {
             return Results.Json(new {});
         }
+        
+        // Log the request
+        logger.LogInformation("Autocomplete request received for \"{query}\" query on {timestamp} at {path}",
+            query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
 
         return Results.Json(score.Trie.GetWords(query));
     }
@@ -69,7 +77,7 @@ public class SearchHandler
     }
 
     public static IResult _searchHtmlHandler(HttpContext ctx, ITokenizer tokenizer, IScore score,
-        IDocumentService documentService, ScribanTemplateService scribanService)
+        IDocumentService documentService, ScribanTemplateService scribanService, ILogger<SearchHandler> logger)
     {
         // Get the query parameters
         var query = ctx.Request.Query["q"];
@@ -77,6 +85,10 @@ public class SearchHandler
         {
             return Results.BadRequest("q property is required!"); // TODO: error message instead
         }
+        
+        // Log the request
+        logger.LogInformation("Search request received for \"{query}\" query on {timestamp} at {path}",
+            query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
         
         // Perform the search
         var searchResults = _searchHandler(score, tokenizer, documentService, query);

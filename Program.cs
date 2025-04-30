@@ -202,6 +202,13 @@ openTelemetryBuilder.WithMetrics(metrics => metrics
     .AddRuntimeInstrumentation()
     .AddPrometheusExporter());
 
+// Add logger 
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+});
+
 // Create app instance
 var app = builder.Build();
 app.MapPrometheusScrapingEndpoint();
