@@ -11,8 +11,10 @@ public class SearchHandler
     public static void RegisterHandlers(WebApplication app)
     {
         // Register API routes
-        app.MapGet("/api/v1/search", _apiHandler).WithName("api.search");
-        
+        var api = app.MapGroup("/api/v1");
+        api.MapGet("/search", _apiHandler).WithName("api.search");
+        api.MapPost("/autocomplete", _autocompleteHandler).WithName("api.autocomplete");
+
         // Register HTML routes
         app.MapGet("/search", _searchHtmlHandler).WithName("search");
         app.MapGet("/", _indexHandler).WithName("index");
@@ -35,6 +37,16 @@ public class SearchHandler
         
         // Return the response
         return Results.Ok(searchResults);
+    }
+
+    public static IResult _autocompleteHandler(HttpContext ctx, IScore score) {
+        var query = ctx.Request.Form["query"].ToString();
+        if (string.IsNullOrEmpty(query))
+        {
+            return Results.Json(new {});
+        }
+
+        return Results.Json(score.Trie.GetWords(query));
     }
 
     public static IResult _indexHandler(HttpContext ctx, ScribanTemplateService scribanService)

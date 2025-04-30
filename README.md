@@ -25,7 +25,7 @@
   - [x] Add backend using ASP.NET Core.
   - [ ] Add simple frontend using the files in static directory with Scriban template engine.
     - [x] Add support for search queries.
-    - [ ] Add support for autocompletion.
+    - [x] Add support for autocompletion.
     - [ ] Add support for adding/removing entries from index.
   - [ ] Add logging support.
   - [ ] Prometheus integration for tracing.

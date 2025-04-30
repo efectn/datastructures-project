@@ -3,6 +3,7 @@
     <form action="/search" method="GET">
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
         <input class="mdl-textfield__input" id="q" name="q" placeholder="Query'i girin" required type="text">
+        <ul id="autocomplete-list" class="autocomplete-dropdown"></ul>
       </div>
       <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored search-button" type="submit">
         Ara
@@ -10,3 +11,59 @@
     </form>
   </div>
 </main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('q');
+    const list = document.getElementById('autocomplete-list');
+
+    function getLastWord(str) {
+      const words = str.split(' ');
+      return words[words.length - 1];
+    }
+
+    input.addEventListener('input', function() {
+      const value = this.value;
+      const lastWord = getLastWord(value);
+      list.innerHTML = '';
+
+      if (lastWord.trim() !== '') {
+        const formData = new URLSearchParams();
+        formData.append('query', lastWord);
+
+        fetch('/api/v1/autocomplete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData
+        })
+                .then(response => response.json())
+                .then(data => {
+                  data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    li.classList.add('autocomplete-item');
+
+                    li.addEventListener('click', function() {
+                      const words = value.split(' ');
+                      words[words.length - 1] = item;
+                      input.value = words.join(' ') + ' ';
+                      list.innerHTML = '';
+                      input.focus();
+                    });
+
+                    list.appendChild(li);
+                  });
+                })
+                .catch(error => console.error('Error while fetching autocompletion endpoint:', error));
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (e.target !== input) {
+        list.innerHTML = '';
+      }
+    });
+  });
+</script>
