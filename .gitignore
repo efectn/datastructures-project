@@ -56,3 +56,4 @@ nunit-*.xml
 .idea/*
 Tests/bin*
 Tests/obj*
+data/*

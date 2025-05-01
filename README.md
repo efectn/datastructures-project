@@ -30,7 +30,7 @@
   - [x] Add logging support.
   - [ ] Add configuration files.
   - [x] Prometheus integration for tracing.
-    - [ ] Visualise the data with Grafana.
+    - [x] Visualise the data with Grafana.
   - [x] Docker integration.
 - [ ] Implement hashtable functions.
   - [ ] Separate chaining.
