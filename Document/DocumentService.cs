@@ -35,7 +35,7 @@ public class DocumentService : IDocumentService
         }
 
         documents.Remove(id);
-        // TODO: Implement removal from index
+        _index.Remove(id);
     }
 
     public Document GetDocument(int id)
