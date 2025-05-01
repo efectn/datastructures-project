@@ -27,7 +27,7 @@ var documentRepository = new DocumentRepository(databaseCtx);
 // Initialize the services
 var documentService = new DocumentService(invertedIndex, tokenizer, documentRepository);
 
-// Add old documents to the index
+// Add old documents from database to the index
 var documents = documentRepository.GetAllDocuments();
 foreach (var document in documents)
 {
@@ -35,10 +35,6 @@ foreach (var document in documents)
     invertedIndex.Add(document.Id, tokens.ToArray());
     //forwardIndex.Add(document.Id, tokens.ToArray());
 }
-
-// Add sample docs using service
-documentService.AddDocument("test dökümanı", "http://example.com/test", "test.");
-// documentService.RemoveDocument(2);
 
 /*
 Console.WriteLine(invertedIndex.AverageDoclength);
@@ -202,6 +198,9 @@ app.UseStaticFiles();
 
 // Register search handlers
 SearchHandler.RegisterHandlers(app);
+
+// Register document handlers
+DocumentHandler.RegisterHandlers(app);
 
 app.Run();
 

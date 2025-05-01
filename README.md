@@ -23,10 +23,10 @@
   - [ ] Create unit-tests.
 - [ ] Backend & frontend.
   - [x] Add backend using ASP.NET Core.
-  - [ ] Add simple frontend using the files in static directory with Scriban template engine.
+  - [x] Add simple frontend using the files in static directory with Scriban template engine.
     - [x] Add support for search queries.
     - [x] Add support for autocompletion.
-    - [ ] Add support for adding/removing entries from index.
+    - [x] Add support for adding/removing entries from index.
   - [x] Add logging support.
   - [ ] Add configuration files.
   - [x] Prometheus integration for tracing.

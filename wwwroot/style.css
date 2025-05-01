@@ -135,3 +135,25 @@ h2 {
 .autocomplete-item.active {
     background-color: #eee;
 }
+
+.card-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-entry {
+    flex: 2;
+    min-width: 300px;
+}
+
+.index-data {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.main-align-normal {
+    align-items: normal !important;
+}

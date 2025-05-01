@@ -6,4 +6,5 @@ public interface IDocumentService
     void AddDocument(string title, string url, string description);
     void RemoveDocument(int id);
     Document GetDocument(int id);
+    List<Database.Model.Document> GetAllDocuments();
 }

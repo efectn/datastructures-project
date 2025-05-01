@@ -1,0 +1,74 @@
+{{if FlashMessage != ""}}
+    <script>
+        toastr.info('{{FlashMessage}}')
+    </script>
+{{end}}
+
+<script>
+    $(document).ready(function () {
+        $('#entry-table').DataTable({
+            language: {
+                url: "//cdn.datatables.net/plug-ins/2.3.0/i18n/tr.json"
+            }
+        });
+    });
+</script>
+
+<main class="main-index main-align-normal">
+    <div class="index-data">
+        <div class="add-entry">
+            <h3>Döküman Ekle</h3>
+            <div
+                    class="card-box">
+                <form action="/documents/create" method="POST">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="text" name="title" placeholder="Başlık"
+                               required>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield">
+                        <input class="mdl-textfield__input" type="url" name="url" placeholder="URL" required>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield">
+                                <textarea class="mdl-textfield__input" name="description"
+                                          placeholder="Açıklama" required></textarea>
+                    </div>
+                    <button type="submit"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                        Ekle
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div style="flex: 6;">
+            <h3>Dökümanlar</h3>
+            <div
+                    class="card-box">
+                <table id="entry-table" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th class="mdl-data-table__cell--non-numeric">ID</th>
+                        <th class="mdl-data-table__cell--non-numeric">Başlık</th>
+                        <th class="mdl-data-table__cell--non-numeric">URL</th>
+                        <th class="mdl-data-table__cell--non-numeric">Açıklama</th>
+                        <th class="mdl-data-table__cell--non-numeric">İşlem</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ for document in Documents }}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">{{ document.id }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ document.title }}</td>
+                            <td class="mdl-data-table__cell--non-numeric"><a href="{{ document.url }}" target="_blank">{{ document.url }}</a></td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ document.description }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <a href="/documents/delete/{{ document.id }}" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">Sil</a>
+                            </td>
+                        </tr>
+                    {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>

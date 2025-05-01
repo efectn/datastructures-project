@@ -51,4 +51,9 @@ public class DocumentService : IDocumentService
         
         return document;
     }
+    
+    public List<Database.Model.Document> GetAllDocuments()
+    {
+        return _documentRepository.GetAllDocuments();
+    }
 }
