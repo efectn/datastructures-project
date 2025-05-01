@@ -91,11 +91,14 @@ public class SearchHandler
             query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
         
         // Perform the search
+        var timeBefore = DateTime.Now;
         var searchResults = _searchHandler(score, tokenizer, documentService, query);
+        var elapsedMillis = (DateTime.Now - timeBefore).TotalMilliseconds;
         
         return Results.Content(scribanService.RenderWithLayout("Results", new Dictionary<string, object>
         {
             {"Title", query + " için Sonuçlar"},
+            {"Info", $"\"{query}\" için {searchResults?.Count} sonuç bulundu. Arama süresi: {elapsedMillis} ms."},
             {"Results", searchResults}
         }), "text/html");
     }

@@ -6,6 +6,11 @@
         {{if !Results}}
             <p class="no-results">Arama sonuçları bulunamadı.</p>
         {{end}}
+        
+        {{if Info}}
+            <p class="no-results">{{Info}}</p>
+        {{end}}
+        
         {{ for result in Results }}
             <div class="result-item">
                 <h3 class="result-title">{{ result.title }}</h3>
