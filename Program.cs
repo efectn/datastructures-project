@@ -1,3 +1,5 @@
+using datastructures_project.Database;
+using datastructures_project.Database.Repository;
 using datastructures_project.Document;
 using datastructures_project.Handler;
 using datastructures_project.Search.Index;
@@ -9,54 +11,38 @@ using datastructures_project.Template;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 
-var documents = new Dictionary<int, Document>
-{
-    { 0, new Document("Sağlıklı Beslenme Rehberi", "https://example.com/saglikli-beslenme", 
-        "Dengeli ve sağlıklı beslenme için temel ipuçları.") },
-
-    { 1, new Document("Dünya Dünya Tarihindeki Önemli Olaylar", "https://example.com/tarih-onemli-olaylar", 
-        "Tarihte dönüm noktası olmuş olaylara genel bir bakış.") },
-
-    { 2, new Document("Etkili Dünya Zaman Yönetimi yönet", "https://example.com/zaman-yonetimi", 
-        "Günlük hayatınızı daha verimli hale getirmek için zaman yönetimi stratejileri.") },
-
-    { 3, new Document("Kişisel Finans Yönetimi", "https://example.com/finans-yonetimi", 
-        "Bütçenizi nasıl yöneteceğinize dair pratik ipuçları.") },
-
-    { 4, new Document("Dünyanın En Güzel Seyahat Rotaları", "https://example.com/en-guzel-seyahat-rotalari", 
-        "Dünyada mutlaka görülmesi gereken yerler.") },
-
-    { 5, new Document("Mutluluk ve Pozitif Düşünce", "https://example.com/mutluluk-pozitif-dusunce", 
-        "Mutlu ve pozitif bir yaşam için bilimsel öneriler.") },
-
-    { 6, new Document("Verimli Uyku İçin İpuçları", "https://example.com/verimli-uyku", 
-        "Kaliteli uyku için uygulanabilecek pratik yöntemler.") },
-
-    { 7, new Document("Doğa ve Çevreyi Koruma", "https://example.com/cevreyi-koruma", 
-        "Çevre bilinci oluşturmak ve doğayı korumak için öneriler.") },
-
-    { 8, new Document("Evde Bitki Yetiştirme Rehberi", "https://example.com/bitki-bakimi", 
-        "Evde bitki bakımı ve yetiştirme konusunda temel bilgiler.") },
-
-    { 9, new Document("Stresi Azaltma Teknikleri", "https://example.com/stres-azaltma", 
-        "Günlük hayatın stresini azaltmak için bilimsel yöntemler.") }
-};
-
 var tokenizer = new Tokenizer();
 var trie = new Trie();
 var invertedIndex = new InvertedIndex(trie);
 //var forwardIndex = new ForwardIndex(trie);
-var documentService = new DocumentService(invertedIndex, tokenizer);
-
-foreach (var (id, document) in documents)
-{
-    documentService.AddDocument(id, document);
-}
-
-// TODO: Initialize BM25 before documentservice and update doclength everytime new doc added, not only during initialization
 var bm25 = new BM25(invertedIndex); 
 
+// Initialize the database context
+var databaseCtx = new ApplicationDbContext();
+databaseCtx.Database.EnsureCreated();
+
+// Initialize the repositories
+var documentRepository = new DocumentRepository(databaseCtx);
+
+// Initialize the services
+var documentService = new DocumentService(invertedIndex, tokenizer, documentRepository);
+
+// Add old documents to the index
+var documents = documentRepository.GetAllDocuments();
+foreach (var document in documents)
+{
+    var tokens = tokenizer.Tokenize(document.Title);
+    invertedIndex.Add(document.Id, tokens.ToArray());
+    //forwardIndex.Add(document.Id, tokens.ToArray());
+}
+
+// Add sample docs using service
+documentService.AddDocument("test dökümanı", "http://example.com/test", "test.");
+// documentService.RemoveDocument(2);
+
 /*
+Console.WriteLine(invertedIndex.AverageDoclength);
+
 var text = "ve ile  , test gelecek yaptığında bilgisayar?., test geleceğinde yaptıklarında masa yaz yanar yazı yaza yazar test test test";
 var tokens = tokenizer.Tokenize(text);
 Console.WriteLine("Tokens:");

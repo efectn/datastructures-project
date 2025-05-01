@@ -1,3 +1,4 @@
+using datastructures_project.Database.Repository;
 using datastructures_project.Search.Index;
 using datastructures_project.Search.Tokenizer;
 
@@ -5,41 +6,49 @@ namespace datastructures_project.Document;
 
 public class DocumentService : IDocumentService
 {
-    private Dictionary<int, Document> documents; // TODO: use EF Core instead
+    private IDocumentRepository _documentRepository;
     private readonly IIndex _index;
     private readonly ITokenizer _tokenizer;
 
-    public DocumentService(IIndex index, ITokenizer tokenizer)
+    public DocumentService(IIndex index, ITokenizer tokenizer, IDocumentRepository documentRepository)
     {
+        _documentRepository = documentRepository;
         _index = index;
         _tokenizer = tokenizer;
-        documents = new Dictionary<int, Document>();
     }
 
-    public void AddDocument(int id, Document document)
+    public void AddDocument(string title, string url, string description)
     {
-        if (documents.ContainsKey(id))
+        var document = new Database.Model.Document(title, url, description);
+        var (doc, rows) = _documentRepository.CreateDocument(title, url, description);
+        if (rows == 0)
         {
             throw new ArgumentException("Document with this id already exists");
         }
-
-        documents.Add(id, document);
-        _index.Add(id, _tokenizer.Tokenize(document.Title).ToArray());
+        
+        // Add the document to the index
+        _index.Add(doc.Id, _tokenizer.Tokenize(document.Title).ToArray());
     }
 
     public void RemoveDocument(int id)
     {
-        if (!documents.ContainsKey(id))
+        var rows = _documentRepository.RemoveDocument(id);
+        if (rows == 0)
         {
             throw new ArgumentException("Document with this id does not exist");
         }
-
-        documents.Remove(id);
+        
         _index.Remove(id);
     }
 
-    public Document GetDocument(int id)
+    public Database.Model.Document GetDocument(int id)
     {
-        return documents[id];
+        var document = _documentRepository.GetDocumentById(id);
+        if (document == null)
+        {
+            throw new ArgumentException("Document with this id does not exist");
+        }
+        
+        return document;
     }
 }

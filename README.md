@@ -9,7 +9,7 @@
       - [ ] Create unit-tests and benchmarks.
     - [x] Add forward index.
       - [ ] Create unit-tests and benchmarks.
-    - [ ] Store indexed data in SQL or NoSQL database.
+    - [x] Store indexed data in SQL or NoSQL database.
       - [ ] Create unit-tests and benchmarks.
 - [ ] Add search scoring algorithms.
   - [x] Implement BM25.
@@ -44,9 +44,14 @@
   - [ ] Create unit-tests for B-tree.
   - [ ] Create benchmarks and compare B-tree with other hashtable functions.
 
-# Used Data Structures
+# Used Algorithms & Data Structures
 
 - Hashtable
 - Linked List (for linked list implementation of hashtable)
 - Trie
 - B-tree
+- Inverted Index
+- Forward Index
+- BM25
+- TF-IDF
+- Levenshtein distance
