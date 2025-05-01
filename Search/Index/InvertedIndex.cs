@@ -6,6 +6,12 @@ public class InvertedIndex : IIndex
     private readonly Dictionary<string, HashSet<(int, int)>> _index; // term -> (docId, termFrequency)
     private readonly ITrie _trie;
     public Dictionary<string, HashSet<(int, int)>> Index => _index;
+    private double _averageDocLength;
+    
+    public double AverageDoclength
+    {
+        get => _averageDocLength;
+    }
     
     public ITrie Trie
     {
@@ -36,6 +42,11 @@ public class InvertedIndex : IIndex
             }
             _index[word].Add((docId, termFrequency));
         }
+        
+        // Update average document length
+        var docLength = DocumentLength(docId);
+        var newTotalLength = _averageDocLength * (DocumentCount()-1) + docLength;
+        _averageDocLength = newTotalLength / DocumentCount();
     }
     
     public int DocumentCount()
@@ -89,5 +100,23 @@ public class InvertedIndex : IIndex
         }
         
         return tokens;
+    }
+    
+    public void Remove(int docId)
+    {
+        foreach (var (_, docs) in _index)
+        {
+            // Skip if the document is not in the postings list
+            if (!docs.Any(d => d.Item1 == docId)) continue;
+            
+            // Update average document length
+            var docLength = DocumentLength(docId);
+            var newTotalLength = _averageDocLength * DocumentCount() - docLength;
+            _averageDocLength = DocumentCount() > 1 ? newTotalLength / (DocumentCount()-1) : 0;
+            
+            // TODO: remove the words from trie in case they are not used by any other document
+            // Remove the document from the postings list of each word
+            docs.RemoveWhere(d => d.Item1 == docId);
+        }
     }
 }

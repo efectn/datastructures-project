@@ -5,6 +5,7 @@ namespace datastructures_project.Search.Index;
 public interface IIndex
 {
     ITrie Trie { get; }
+    double AverageDoclength { get; }
     void Add(int docId, string[] words);
     int DocumentCount();
     int DocumentWordsCount(int docId);
@@ -12,4 +13,5 @@ public interface IIndex
     int DocumentLength(int docId);
     List<int> DocumentIds();
     List<string> Tokens(int docId);
+    void Remove(int docId);
 }

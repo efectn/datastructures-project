@@ -7,6 +7,12 @@ public class ForwardIndex : IIndex
     private readonly Dictionary<int, HashSet<(string, int)>> _index; // term -> (word, termFrequency)
     private readonly ITrie _trie;
     public Dictionary<int, HashSet<(string, int)>> Index => _index;
+    private double _averageDocLength;
+    
+    public double AverageDoclength
+    {
+        get => _averageDocLength;
+    }
     
     public ITrie Trie
     {
@@ -37,6 +43,11 @@ public class ForwardIndex : IIndex
             }
             _index[docId].Add((word, termFrequency));
         }
+        
+        // Update average document length
+        var docLength = DocumentLength(docId);
+        var newTotalLength = _averageDocLength * (DocumentCount()-1) + docLength;
+        _averageDocLength = newTotalLength / DocumentCount();
     }
     
     public int DocumentCount()
@@ -98,5 +109,20 @@ public class ForwardIndex : IIndex
         }
         
         return tokens;
+    }
+    
+    public void Remove(int docId)
+    {
+        if (_index.ContainsKey(docId))
+        {
+            // Update average document length
+            var docLength = DocumentLength(docId);
+            var newTotalLength = _averageDocLength * DocumentCount() - docLength;
+            _averageDocLength = DocumentCount() > 1 ? newTotalLength / (DocumentCount() - 1) : 0;
+            
+            // TODO: remove the words from trie in case they are not used by any other document
+            // Remove the document
+            _index.Remove(docId);
+        }
     }
 }

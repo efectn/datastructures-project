@@ -8,7 +8,6 @@ public class BM25 : IScore
     private readonly IIndex _index;
     private readonly double _k1;
     private readonly double _b;
-    private readonly double _averageDocLength;
     
     public ITrie Trie => _index.Trie;
 
@@ -17,15 +16,6 @@ public class BM25 : IScore
         _index = index;
         _k1 = 1.2;
         _b = 0.75;
-
-        var totalLength = 0;
-        var docCount = _index.DocumentCount();
-        foreach (var docId in _index.DocumentIds())
-        {
-            totalLength += _index.DocumentLength(docId);
-        }
-
-        _averageDocLength = docCount > 0 ? (double)totalLength / docCount : 0;
     }
 
     public double CalculateIDF(string token)
@@ -48,7 +38,7 @@ public class BM25 : IScore
             foreach (var (doc, freq) in _index.WordDocuments(token))
             {
                 var docLen = _index.DocumentLength(doc);
-                var score = idf * (freq * (_k1 + 1) / (freq + _k1 * (1 - _b + _b * docLen / _averageDocLength)));
+                var score = idf * (freq * (_k1 + 1) / (freq + _k1 * (1 - _b + _b * docLen / _index.AverageDoclength)));
 
                 if (termFreqs.ContainsKey(doc))
                 {
