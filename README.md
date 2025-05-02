@@ -21,14 +21,14 @@
   - [ ] Add unit-tests.
 - [x] Add Levenshtein distance algorithm for word similarity check.
   - [ ] Create unit-tests.
-- [ ] Backend & frontend.
+- [x] Backend & frontend.
   - [x] Add backend using ASP.NET Core.
   - [x] Add simple frontend using the files in static directory with Scriban template engine.
     - [x] Add support for search queries.
     - [x] Add support for autocompletion.
     - [x] Add support for adding/removing entries from index.
   - [x] Add logging support.
-  - [ ] Add configuration files.
+  - [x] Add configuration files.
   - [x] Prometheus integration for tracing.
     - [x] Visualise the data with Grafana.
   - [x] Docker integration.

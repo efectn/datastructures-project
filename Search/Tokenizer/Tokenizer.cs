@@ -8,9 +8,12 @@ public class Tokenizer : ITokenizer
     private readonly string[] stopWords;
     private readonly string[] protectedWords;
     private readonly TurkishStemmer stemmer;
+    private readonly IConfiguration configuration;
     
-    public Tokenizer(string stopWordsFile = "Resources/stop-words.txt", string protectedWordsFile = "Resources/stemmer-protected-words.txt")
+    public Tokenizer(IConfiguration configuration, string stopWordsFile = "Resources/stop-words.txt", string protectedWordsFile = "Resources/stemmer-protected-words.txt")
     {
+        this.configuration = configuration;
+        
         // Initialize stemmer
         stemmer = new TurkishStemmer();
         
@@ -38,6 +41,9 @@ public class Tokenizer : ITokenizer
     
     public List<string> Tokenize(string text)
     {
+        var enableStemmer = Boolean.Parse(configuration["Search:Tokenizer:EnableStemmer"]);
+        var enableStopWords = Boolean.Parse(configuration["Search:Tokenizer:EnableStopWords"]);
+        
         // Normalize the text to lowercase
         text = text.ToLower().Trim();
 
@@ -48,9 +54,9 @@ public class Tokenizer : ITokenizer
         var tokens = text.Split(new[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         // Remove stop words
-        var filteredTokens = tokens.Where(token => !stopWords.Contains(token)).ToList();
+        var filteredTokens = tokens.Where(token => enableStopWords ? !stopWords.Contains(token) : true).ToList();
         
         // Stem the tokens and return the result
-        return filteredTokens.Select(token => !protectedWords.Contains(token) ? stemmer.Stem(token) : token).ToList();
+        return filteredTokens.Select(token => !protectedWords.Contains(token) && enableStemmer ? stemmer.Stem(token) : token).ToList();
     }
 }

@@ -15,6 +15,14 @@ public class DocumentService : IDocumentService
         _documentRepository = documentRepository;
         _index = index;
         _tokenizer = tokenizer;
+        
+        // Add previous documents to index
+        var documents = documentRepository.GetAllDocuments();
+        foreach (var document in documents)
+        {
+            var tokens = tokenizer.Tokenize(document.Title);
+            index.Add(document.Id, tokens.ToArray());
+        }
     }
 
     public void AddDocument(string title, string url, string description)

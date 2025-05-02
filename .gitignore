@@ -57,3 +57,4 @@ nunit-*.xml
 Tests/bin*
 Tests/obj*
 data/*
+datastructures-project.sln.DotSettings.user
