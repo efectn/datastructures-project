@@ -2,8 +2,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-COPY *.csproj ./
-COPY . .
+COPY src/*.csproj ./
+COPY src/. .
 RUN dotnet restore
 
 RUN dotnet publish -c Release -o /src/publish --self-contained false
