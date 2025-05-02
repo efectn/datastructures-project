@@ -20,7 +20,7 @@
   - [x] Add support for wildcard search queries.
   - [ ] Add unit-tests.
 - [x] Add Levenshtein distance algorithm for word similarity check.
-  - [ ] Create unit-tests.
+  - [x] Create unit-tests.
 - [x] Backend & frontend.
   - [x] Add backend using ASP.NET Core.
   - [x] Add simple frontend using the files in static directory with Scriban template engine.
