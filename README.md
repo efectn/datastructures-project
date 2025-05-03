@@ -15,8 +15,9 @@
       - [ ] Create unit-tests.
 - [ ] Add search scoring algorithms.
   - [x] Implement BM25.
+    - [ ] Create unit-tests.
   - [x] Implement TF-IDF.
-  - [ ] Create unit-tests.
+    - [x] Create unit-tests.
   - [ ] Create benchmarks and compare BM25 and TF-IDF.
 - [x] Add support for Trie data structure.
   - [x] Implement autocompletion.

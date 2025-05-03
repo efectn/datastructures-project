@@ -14,7 +14,7 @@ public class TFIDF: IScore
         _index = index;
     }
 
-    public double calculateIDF(string token)
+    private double _calculateIdf(string token)
     {
         var wordDocs = _index.WordDocuments(token);
         if (wordDocs == null) return 0;
@@ -25,7 +25,7 @@ public class TFIDF: IScore
         return idf;
     }
 
-    public double calculateTF(int docId, int wordFreq)
+    private double _calculateTf(int docId, int wordFreq)
     {
         return 0.5 + 0.5 * ((double)wordFreq/_index.DocumentWordsCount(docId)); // k = 0.5 normalization
     }
@@ -36,11 +36,11 @@ public class TFIDF: IScore
 
         foreach (var token in tokens)
         {
-            var idf = calculateIDF(token); 
+            var idf = _calculateIdf(token); 
             
             foreach (var (doc, freq) in _index.WordDocuments(token))
             {
-                var tfidf = calculateTF(doc, freq) * idf;
+                var tfidf = _calculateTf(doc, freq) * idf;
                 if (termFreqs.ContainsKey(doc))
                 {
                     termFreqs[doc] += tfidf;
