@@ -36,7 +36,7 @@ public class DocumentRepositoryTest
         public void DocumentRepository_GetDocumentById()
         {
             var context = _getInMemoryDbContext();
-            var doc = new Document("Sample", "https://sample.com", "Sample Desc");
+            var doc = new datastructures_project.Database.Model.Document("Sample", "https://sample.com", "Sample Desc");
             context.Documents.Add(doc);
             context.SaveChanges();
 
@@ -52,8 +52,8 @@ public class DocumentRepositoryTest
         {
             var context = _getInMemoryDbContext();
             context.Documents.AddRange(
-                new Document("Doc1", "http://url1.com", "desc1"),
-                new Document("Doc2", "http://url2.com", "desc2")
+                new datastructures_project.Database.Model.Document("Doc1", "http://url1.com", "desc1"),
+                new datastructures_project.Database.Model.Document("Doc2", "http://url2.com", "desc2")
             );
             context.SaveChanges();
 
@@ -66,7 +66,7 @@ public class DocumentRepositoryTest
         public void DocumentRepository_RemoveDocument()
         {
             var context = _getInMemoryDbContext();
-            var doc = new Document("ToDelete", "http://url.com", "desc");
+            var doc = new datastructures_project.Database.Model.Document("ToDelete", "http://url.com", "desc");
             context.Documents.Add(doc);
             context.SaveChanges();
 
