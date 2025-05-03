@@ -85,9 +85,7 @@ public class ForwardIndex : IIndex
     {
         if (_index.ContainsKey(docId))
         {
-            var length = 0;
-            
-            return _index[docId].Select(p => p.Item2 * p.Item1.Length).Sum();
+            return _index[docId].Select(p => p.Item2).Sum();
         }
         return 0;
     }

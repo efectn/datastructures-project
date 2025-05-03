@@ -27,7 +27,7 @@ public class InvertedIndexTest
         Assert.Equal(5, invertedIndex.DocumentWordsCount(4));
         
         // Check the average document length
-        Assert.Equal(14.25, invertedIndex.AverageDoclength, 2);
+        Assert.Equal(2.75, invertedIndex.AverageDoclength, 2);
     }
 
     [Fact]
@@ -45,9 +45,9 @@ public class InvertedIndexTest
         invertedIndex.Add(3, new[] {"hello", "hello", "everyone", "everyone"});
 
         // Check the document length
-        Assert.Equal(10, invertedIndex.DocumentLength(1));
-        Assert.Equal(13, invertedIndex.DocumentLength(2));
-        Assert.Equal(26, invertedIndex.DocumentLength(3));
+        Assert.Equal(2, invertedIndex.DocumentLength(1));
+        Assert.Equal(2, invertedIndex.DocumentLength(2));
+        Assert.Equal(4, invertedIndex.DocumentLength(3));
     }
 
     [Fact]
@@ -130,25 +130,25 @@ public class InvertedIndexTest
         
         // Add some documents to the inverted index
         invertedIndex.Add(1, new[] {"hello", "world"});
-        Assert.Equal(10.0, invertedIndex.AverageDoclength, 0.1);
+        Assert.Equal(2, invertedIndex.AverageDoclength, 0.1);
         
         invertedIndex.Add(2, new[] {"hello", "everyone", "hello", "everyone"});
-        Assert.Equal(18, invertedIndex.AverageDoclength, 0.1);
+        Assert.Equal(3, invertedIndex.AverageDoclength, 0.1);
         
         invertedIndex.Add(3, new[] {"goodbye", "world", "test"});
-        Assert.Equal(17.33, invertedIndex.AverageDoclength, 0.1);
+        Assert.Equal(3, invertedIndex.AverageDoclength, 0.1);
         
         // Remove non-existing document
         invertedIndex.Remove(15);
-        Assert.Equal(17.33, invertedIndex.AverageDoclength, 0.1);
+        Assert.Equal(3, invertedIndex.AverageDoclength, 0.1);
         
         // Remove a document
         invertedIndex.Remove(1);
-        Assert.Equal(21, invertedIndex.AverageDoclength, 0.1);
+        Assert.Equal(3.5, invertedIndex.AverageDoclength, 0.1);
         
         // Remove another document
         invertedIndex.Remove(2);
-        Assert.Equal(16.0, invertedIndex.AverageDoclength, 0.1);
+        Assert.Equal(3.0, invertedIndex.AverageDoclength, 0.1);
         
         // Remove the last document
         invertedIndex.Remove(3);

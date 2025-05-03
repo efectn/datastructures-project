@@ -72,11 +72,11 @@ public class InvertedIndex : IIndex
     public int DocumentLength(int docId)
     {
         var length = 0;
-        foreach (var (word, docs) in _index)
+        foreach (var (_, docs) in _index)
         {
             if (docs.Any(d => d.Item1 == docId))
             {
-                length += word.Length * docs.First(d => d.Item1 == docId).Item2;
+                length += docs.First(d => d.Item1 == docId).Item2;
             }
         }
         
