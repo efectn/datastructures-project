@@ -6,19 +6,23 @@
     - [x] Create unit-tests for tokenizer.
 - [ ] Create indexers.
     - [x] Add inverted index.
-      - [ ] Create unit-tests and benchmarks.
+      - [ ] Create unit-tests.
+      - [ ] Create benchmarks.
     - [x] Add forward index.
-      - [ ] Create unit-tests and benchmarks.
+      - [ ] Create unit-tests.
+      - [ ] Create benchmarks.
     - [x] Store indexed data in SQL or NoSQL database.
-      - [ ] Create unit-tests and benchmarks.
+      - [ ] Create unit-tests.
 - [ ] Add search scoring algorithms.
   - [x] Implement BM25.
   - [x] Implement TF-IDF.
-  - [ ] Create unit-tests and benchmarks, compare them with each other.
-- [ ] Add support for Trie data structure.
+  - [ ] Create unit-tests.
+  - [ ] Create benchmarks and compare BM25 and TF-IDF.
+- [x] Add support for Trie data structure.
   - [x] Implement autocompletion.
   - [x] Add support for wildcard search queries.
-  - [ ] Add unit-tests.
+  - [x] Add unit-tests.
+  - [ ] Add benchmarks.
 - [x] Add Levenshtein distance algorithm for word similarity check.
   - [x] Create unit-tests.
 - [x] Backend & frontend.
