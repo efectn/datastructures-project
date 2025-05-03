@@ -9,7 +9,7 @@
       - [x] Create unit-tests.
       - [ ] Create benchmarks.
     - [x] Add forward index.
-      - [ ] Create unit-tests.
+      - [x] Create unit-tests.
       - [ ] Create benchmarks.
     - [x] Store indexed data in SQL or NoSQL database.
       - [ ] Create unit-tests.
