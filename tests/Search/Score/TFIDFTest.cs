@@ -1,6 +1,6 @@
 namespace tests.Search.Score;
 
-public class TFIDF
+public class TFIDFTest
 {
     [Fact]
     public void TFIDF_Calculate()
