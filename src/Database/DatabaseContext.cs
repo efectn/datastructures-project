@@ -9,9 +9,18 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Model.Document> Documents { get; set; }
     
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+    
+    public ApplicationDbContext() : base()
+    {
+    }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=database.db");
+        if (!optionsBuilder.IsConfigured)
+            optionsBuilder.UseSqlite("Data Source=database.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

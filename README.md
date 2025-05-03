@@ -12,7 +12,7 @@
       - [x] Create unit-tests.
       - [ ] Create benchmarks.
     - [x] Store indexed data in SQL or NoSQL database.
-      - [ ] Create unit-tests.
+      - [x] Create unit-tests.
 - [ ] Add search scoring algorithms.
   - [x] Implement BM25.
     - [X] Create unit-tests.
