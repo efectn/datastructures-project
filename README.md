@@ -23,7 +23,7 @@
   - [x] Implement autocompletion.
   - [x] Add support for wildcard search queries.
   - [x] Add unit-tests.
-  - [ ] Add benchmarks.
+  - [x] Add benchmarks.
 - [x] Add Levenshtein distance algorithm for word similarity check.
   - [x] Create unit-tests.
 - [x] Backend & frontend.
