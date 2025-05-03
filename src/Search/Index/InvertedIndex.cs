@@ -104,15 +104,18 @@ public class InvertedIndex : IIndex
     
     public void Remove(int docId)
     {
+        // Update average document length
+        var docLength = DocumentLength(docId);
+        if (docLength == 0) return; // Document not found
+        
+        var newTotalLength = _averageDocLength * DocumentCount() - docLength;
+        _averageDocLength = DocumentCount() > 1 ? newTotalLength / (DocumentCount()-1) : 0;
+
+        // Remove the document from the list of each word
         foreach (var (_, docs) in _index)
         {
             // Skip if the document is not in the postings list
             if (!docs.Any(d => d.Item1 == docId)) continue;
-            
-            // Update average document length
-            var docLength = DocumentLength(docId);
-            var newTotalLength = _averageDocLength * DocumentCount() - docLength;
-            _averageDocLength = DocumentCount() > 1 ? newTotalLength / (DocumentCount()-1) : 0;
             
             // TODO: remove the words from trie in case they are not used by any other document
             // Remove the document from the postings list of each word

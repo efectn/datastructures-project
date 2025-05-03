@@ -6,7 +6,7 @@
     - [x] Create unit-tests for tokenizer.
 - [ ] Create indexers.
     - [x] Add inverted index.
-      - [ ] Create unit-tests.
+      - [x] Create unit-tests.
       - [ ] Create benchmarks.
     - [x] Add forward index.
       - [ ] Create unit-tests.
