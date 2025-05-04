@@ -14,3 +14,6 @@ BenchmarkRunner.Run<ForwardIndexBenchmark>();
 
 Console.WriteLine("BM25 Benchmarks:");
 BenchmarkRunner.Run<BM25Benchmark>();
+
+Console.WriteLine("TF-IDF Benchmarks:");
+BenchmarkRunner.Run<TFIDFBenchmark>();

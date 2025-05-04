@@ -13,13 +13,13 @@
       - [x] Create benchmarks.
     - [x] Store indexed data in SQL or NoSQL database.
       - [x] Create unit-tests.
-- [ ] Add search scoring algorithms.
+- [x] Add search scoring algorithms.
   - [x] Implement BM25.
     - [X] Create unit-tests.
     - [x] Create benchmarks.
   - [x] Implement TF-IDF.
     - [x] Create unit-tests.
-    - [ ] Create benchmarks.
+    - [x] Create benchmarks.
 - [x] Add support for Trie data structure.
   - [x] Implement autocompletion.
   - [x] Add support for wildcard search queries.
