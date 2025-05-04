@@ -4,21 +4,22 @@
     - [x] Add Turkish stemmer support to tokenizer.
     - [x] Add Turkish stop words to tokenizer.
     - [x] Create unit-tests for tokenizer.
-- [ ] Create indexers.
+- [x] Create indexers.
     - [x] Add inverted index.
       - [x] Create unit-tests.
       - [x] Create benchmarks.
     - [x] Add forward index.
       - [x] Create unit-tests.
-      - [ ] Create benchmarks.
+      - [x] Create benchmarks.
     - [x] Store indexed data in SQL or NoSQL database.
       - [x] Create unit-tests.
 - [ ] Add search scoring algorithms.
   - [x] Implement BM25.
     - [X] Create unit-tests.
+    - [ ] Create benchmarks.
   - [x] Implement TF-IDF.
     - [x] Create unit-tests.
-  - [ ] Create benchmarks and compare BM25 and TF-IDF.
+    - [ ] Create benchmarks.
 - [x] Add support for Trie data structure.
   - [x] Implement autocompletion.
   - [x] Add support for wildcard search queries.

@@ -2,8 +2,11 @@
 using BenchmarkDotNet.Running;
 using tests.Search.Index;
 
-//Console.WriteLine("Trie Benchmarks:");
-//BenchmarkRunner.Run<TrieBenchmark>();
+Console.WriteLine("Trie Benchmarks:");
+BenchmarkRunner.Run<TrieBenchmark>();
 
 Console.WriteLine("InvertedIndex Benchmarks:");
 BenchmarkRunner.Run<InvertedIndexBenchmark>();
+
+Console.WriteLine("ForwardIndex Benchmarks:");
+BenchmarkRunner.Run<ForwardIndexBenchmark>();

@@ -1,7 +1,11 @@
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Engines;
 using datastructures_project.Search.Trie;
 
 [MemoryDiagnoser]
+[SimpleJob(RunStrategy.ColdStart, launchCount: 25,
+    warmupCount: 2)]
+[MinColumn, MaxColumn, MeanColumn]
 public class TrieBenchmark
 {
     [Params(100, 1000, 10000)]

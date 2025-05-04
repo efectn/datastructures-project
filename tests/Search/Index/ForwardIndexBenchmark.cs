@@ -11,11 +11,11 @@ namespace tests.Search.Index;
     warmupCount: 2)]
 [MinColumn, MaxColumn, MeanColumn]
 
-public class InvertedIndexBenchmark
+public class ForwardIndexBenchmark
 {
     [Params(1000)] public int N;
 
-    private InvertedIndex _invertedIndex;
+    private ForwardIndex _forwardIndex;
     private List<string> _words;
     private Mock<ITrie> _trieMock;
     private int _nextDocId;
@@ -27,61 +27,61 @@ public class InvertedIndexBenchmark
         _trieMock.Setup(t => t.AddWord(It.IsAny<string>())).Verifiable();
         _trieMock.Setup(t => t.GetWords(It.IsAny<string>())).Returns(new List<string>());
 
-        _invertedIndex = new InvertedIndex(_trieMock.Object);
+        _forwardIndex = new ForwardIndex(_trieMock.Object);
         _words = Enumerable.Range(0, 100).Select(i => $"word{i}").ToList();
 
         for (int i = 0; i < 50; i++)
         {
             var wordsToAdd = _words.Take(10).ToArray(); // Fixed small size for consistency
-            _invertedIndex.Add(i, wordsToAdd);
+            _forwardIndex.Add(i, wordsToAdd);
         }
 
         _nextDocId = 50;
     }
 
     [Benchmark]
-    public void InvertedIndex_AddDocument()
+    public void ForwardIndex_AddDocument()
     {
         var wordsToAdd = _words.OrderBy(_ => Random.Shared.Next()).Take(10).ToArray();
-        _invertedIndex.Add(_nextDocId++, wordsToAdd);
+        _forwardIndex.Add(_nextDocId++, wordsToAdd);
     }
 
     [Benchmark]
-    public void InvertedIndex_DocumentCount() => _invertedIndex.DocumentCount();
+    public void ForwardIndex_DocumentCount() => _forwardIndex.DocumentCount();
 
     [Benchmark]
-    public void InvertedIndex_DocumentWordsCount() => _invertedIndex.DocumentWordsCount(0);
+    public void ForwardIndex_DocumentWordsCount() => _forwardIndex.DocumentWordsCount(0);
 
     [Benchmark]
-    public void InvertedIndex_GetWords() => _invertedIndex.Trie.GetWords("word15");
+    public void ForwardIndex_GetWords() => _forwardIndex.Trie.GetWords("word15");
 
     [Benchmark]
-    public void InvertedIndex_WordDocuments() => _invertedIndex.WordDocuments("word15");
+    public void ForwardIndex_WordDocuments() => _forwardIndex.WordDocuments("word15");
 
     [Benchmark]
-    public void InvertedIndex_DocumentLength() => _invertedIndex.DocumentLength(0);
+    public void ForwardIndex_DocumentLength() => _forwardIndex.DocumentLength(0);
 
     [Benchmark]
-    public void InvertedIndex_WordDocuments_Empty() => _invertedIndex.WordDocuments("nonexistent");
+    public void ForwardIndex_WordDocuments_Empty() => _forwardIndex.WordDocuments("nonexistent");
 
     [Benchmark]
-    public void InvertedIndex_DocumentLength_Empty() => _invertedIndex.DocumentLength(99999);
+    public void ForwardIndex_DocumentLength_Empty() => _forwardIndex.DocumentLength(99999);
 
     [Benchmark]
-    public void InvertedIndex_GetWords_Empty() => _invertedIndex.Trie.GetWords("nonexistent");
+    public void ForwardIndex_GetWords_Empty() => _forwardIndex.Trie.GetWords("nonexistent");
 
     [Benchmark]
-    public void InvertedIndex_DocumentIds() => _invertedIndex.DocumentIds();
+    public void ForwardIndex_DocumentIds() => _forwardIndex.DocumentIds();
 
     [Benchmark]
-    public void InvertedIndex_Tokens() => _invertedIndex.Tokens(0);
+    public void ForwardIndex_Tokens() => _forwardIndex.Tokens(0);
 
     [Benchmark]
-    public void InvertedIndex_AddRemove()
+    public void ForwardIndex_AddRemove()
     {
         int tempDocId = _nextDocId++;
         var wordsToAdd = _words.Take(10).ToArray();
-        _invertedIndex.Add(tempDocId, wordsToAdd);
-        _invertedIndex.Remove(tempDocId);
+        _forwardIndex.Add(tempDocId, wordsToAdd);
+        _forwardIndex.Remove(tempDocId);
     }
 }
