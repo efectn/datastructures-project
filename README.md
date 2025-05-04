@@ -16,7 +16,7 @@
 - [ ] Add search scoring algorithms.
   - [x] Implement BM25.
     - [X] Create unit-tests.
-    - [ ] Create benchmarks.
+    - [x] Create benchmarks.
   - [x] Implement TF-IDF.
     - [x] Create unit-tests.
     - [ ] Create benchmarks.
