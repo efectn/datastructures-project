@@ -66,7 +66,7 @@ public class InvertedIndex : IIndex
             return _index[word].ToArray();
         }
 
-        return new (int, int)[]{};
+        return [];
     }
     
     public int DocumentLength(int docId)

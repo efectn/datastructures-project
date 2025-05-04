@@ -7,7 +7,7 @@
 - [ ] Create indexers.
     - [x] Add inverted index.
       - [x] Create unit-tests.
-      - [ ] Create benchmarks.
+      - [x] Create benchmarks.
     - [x] Add forward index.
       - [x] Create unit-tests.
       - [ ] Create benchmarks.
