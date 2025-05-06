@@ -1,64 +1,190 @@
-﻿public class QuadraticProbingHashTable
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace datastructures_project.HashTables
 {
-    private int?[] table;
-    private int size;
-    private const int DELETED = int.MinValue;
-
-    public QuadraticProbingHashTable(int size)
+    public class QuadraticProbingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        this.size = size;
-        table = new int?[size];
-    }
+        private KeyValuePair<TKey, TValue>?[] _table;
+        private int _size;
+        private int _count;
 
-    private int Hash(int key)
-    {
-        return key % size;
-    }
-
-    public void Insert(int key)
-    {
-        int index = Hash(key);
-        int i = 0;
-        while (table[(index + i * i) % size] is int val && val != DELETED)
+        public QuadraticProbingHashTable(int size = 16)
         {
-            i++;
+            _size = size;
+            _table = new KeyValuePair<TKey, TValue>?[_size];
         }
-        table[(index + i * i) % size] = key;
-    }
 
-    public bool Search(int key)
-    {
-        int index = Hash(key);
-        int i = 0;
-        while (table[(index + i * i) % size] != null)
-        {
-            if (table[(index + i * i) % size] == key)
-                return true;
-            i++;
-        }
-        return false;
-    }
+        private int Hash(TKey key) => Math.Abs(key!.GetHashCode()) % _size;
 
-    public void Delete(int key)
-    {
-        int index = Hash(key);
-        int i = 0;
-        while (table[(index + i * i) % size] != null)
+        public void Add(TKey key, TValue value)
         {
-            if (table[(index + i * i) % size] == key)
+            if (ContainsKey(key))
+                throw new ArgumentException("Key already exists.");
+
+            int index = Hash(key);
+            int i = 0;
+
+            // Quadratic probing: (hash + i^2) % size
+            while (_table[(index + i * i) % _size].HasValue)
             {
-                table[(index + i * i) % size] = DELETED;
-                return;
+                i++;
+                if (i >= _size) throw new InvalidOperationException("Hash table is full.");
             }
-            i++;
-        }
-    }
 
-    public void PrintTable()
-    {
-        for (int i = 0; i < size; i++)
+            _table[(index + i * i) % _size] = new KeyValuePair<TKey, TValue>(key, value);
+            _count++;
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
         {
-            Console.WriteLine($"[{i}]: {(table[i] == null ? "null" : table[i].ToString())}");
+            int index = Hash(key);
+            int i = 0;
+
+            while (i < _size)
+            {
+                var probeIndex = (index + i * i) % _size;
+                if (!_table[probeIndex].HasValue)
+                    break;
+
+                var kv = _table[probeIndex]!.Value;
+                if (kv.Key!.Equals(key))
+                {
+                    value = kv.Value;
+                    return true;
+                }
+                i++;
+            }
+
+            value = default!;
+            return false;
+        }
+
+        public bool ContainsKey(TKey key)
+        {
+            return TryGetValue(key, out _);
+        }
+
+        public bool Remove(TKey key)
+        {
+            int index = Hash(key);
+            int i = 0;
+
+            while (i < _size)
+            {
+                var probeIndex = (index + i * i) % _size;
+                if (!_table[probeIndex].HasValue)
+                    break;
+
+                var kv = _table[probeIndex]!.Value;
+                if (kv.Key!.Equals(key))
+                {
+                    _table[probeIndex] = null;
+                    _count--;
+                    return true;
+                }
+                i++;
+            }
+
+            return false;
+        }
+
+        public TValue this[TKey key]
+        {
+            get
+            {
+                if (TryGetValue(key, out TValue val))
+                    return val;
+
+                throw new KeyNotFoundException();
+            }
+            set
+            {
+                // Update if exists
+                int index = Hash(key);
+                int i = 0;
+
+                while (i < _size)
+                {
+                    var probeIndex = (index + i * i) % _size;
+                    if (!_table[probeIndex].HasValue)
+                        break;
+
+                    if (_table[probeIndex]!.Value.Key!.Equals(key))
+                    {
+                        _table[probeIndex] = new KeyValuePair<TKey, TValue>(key, value);
+                        return;
+                    }
+                    i++;
+                }
+
+                // Insert new
+                Add(key, value);
+            }
+        }
+
+        public ICollection<TKey> Keys => _table.Where(x => x.HasValue).Select(x => x!.Value.Key).ToList();
+
+        public ICollection<TValue> Values => _table.Where(x => x.HasValue).Select(x => x!.Value.Value).ToList();
+
+        public int Count => _count;
+
+        public bool IsReadOnly => false;
+
+        public void Clear()
+        {
+            _table = new KeyValuePair<TKey, TValue>?[_size];
+            _count = 0;
+        }
+
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            Add(item.Key, item.Value);
+        }
+
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            return TryGetValue(item.Key, out TValue value) && EqualityComparer<TValue>.Default.Equals(value, item.Value);
+        }
+
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0 || arrayIndex > array.Length)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+            if (array.Length - arrayIndex < Count)
+                throw new ArgumentException("Insufficient space.");
+
+            foreach (var pair in this)
+            {
+                array[arrayIndex++] = pair;
+            }
+        }
+
+        public bool Remove(KeyValuePair<TKey, TValue> item)
+        {
+            if (Contains(item))
+            {
+                return Remove(item.Key);
+            }
+            return false;
+        }
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            foreach (var kv in _table)
+            {
+                if (kv.HasValue)
+                    yield return kv.Value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
