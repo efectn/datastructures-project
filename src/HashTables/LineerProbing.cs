@@ -1,112 +1,179 @@
-namespace datastructures_project.HashTables;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-public class LinearProbingHashTable
+namespace datastructures_project.HashTables
 {
-    /*static void Main()
+    public class LinearProbingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        var hashTable = new LinearProbingHashTable(10);
+        private KeyValuePair<TKey, TValue>?[] _table;
+        private int _size;
+        private int _count;
 
-        hashTable.Insert(10);
-        hashTable.Insert(20);
-        hashTable.Insert(30);
-        hashTable.Insert(41);
-
-        Console.WriteLine("Hash Table with Linear Probing:");
-        hashTable.PrintTable();
-        /*
-        Console.WriteLine($"Search 20: {hashTable.Search(20)}");
-        Console.WriteLine("Deleting 20...");
-        hashTable.Delete(20);
-        Console.WriteLine($"Search 20 after deletion: {hashTable.Search(20)}");
-        
-        hashTable.PrintTable();
-    }*/
-    
-    private int?[] table;
-    private int size;
-    private const int DELETED = int.MinValue; // Special marker for deleted slots
-
-    public LinearProbingHashTable(int size)
-    {
-        this.size = size;
-        table = new int?[size];
-    }
-
-    private int Hash(int key)
-    {
-        return key % size;
-    }
-
-    public void Insert(int key)
-    {
-        int index = Hash(key);
-        int start = index;
-
-        while (table[index] != null && table[index] != DELETED)
+        public LinearProbingHashTable(int size = 16)
         {
-            index = (index + 1) % size;
-            if (index == start)
+            _size = size;
+            _table = new KeyValuePair<TKey, TValue>?[_size];
+        }
+
+        private int Hash(TKey key) => Math.Abs(key!.GetHashCode()) % _size;
+
+        public void Add(TKey key, TValue value)
+        {
+            if (ContainsKey(key))
+                throw new ArgumentException("Key already exists.");
+
+            int index = Hash(key);
+            int i = 0;
+
+            while (_table[(index + i) % _size].HasValue)
             {
-                Console.WriteLine("Hash table is full!");
-                return;
+                i++;
+                if (i >= _size) throw new InvalidOperationException("Hash table is full.");
+            }
+
+            _table[(index + i) % _size] = new KeyValuePair<TKey, TValue>(key, value);
+            _count++;
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            int index = Hash(key);
+            int i = 0;
+
+            while (_table[(index + i) % _size].HasValue)
+            {
+                var kv = _table[(index + i) % _size]!.Value;
+                if (kv.Key!.Equals(key))
+                {
+                    value = kv.Value;
+                    return true;
+                }
+                i++;
+                if (i >= _size) break;
+            }
+
+            value = default!;
+            return false;
+        }
+
+        public bool ContainsKey(TKey key)
+        {
+            return TryGetValue(key, out _);
+        }
+
+        public bool Remove(TKey key)
+        {
+            int index = Hash(key);
+            int i = 0;
+
+            while (_table[(index + i) % _size].HasValue)
+            {
+                var kv = _table[(index + i) % _size]!.Value;
+                if (kv.Key!.Equals(key))
+                {
+                    _table[(index + i) % _size] = null;
+                    _count--;
+                    return true;
+                }
+                i++;
+                if (i >= _size) break;
+            }
+
+            return false;
+        }
+
+        public TValue this[TKey key]
+        {
+            get
+            {
+                if (TryGetValue(key, out TValue val))
+                    return val;
+
+                throw new KeyNotFoundException();
+            }
+            set
+            {
+                // Update if exists
+                int index = Hash(key);
+                int i = 0;
+
+                while (_table[(index + i) % _size].HasValue)
+                {
+                    if (_table[(index + i) % _size]!.Value.Key!.Equals(key))
+                    {
+                        _table[(index + i) % _size] = new KeyValuePair<TKey, TValue>(key, value);
+                        return;
+                    }
+                    i++;
+                }
+
+                // Insert new
+                Add(key, value);
             }
         }
 
-        table[index] = key;
-    }
+        public ICollection<TKey> Keys => _table.Where(x => x.HasValue).Select(x => x!.Value.Key).ToList();
 
-    public bool Search(int key)
-    {
-        int index = Hash(key);
-        int start = index;
+        public ICollection<TValue> Values => _table.Where(x => x.HasValue).Select(x => x!.Value.Value).ToList();
 
-        while (table[index] != null)
+        public int Count => _count;
+
+        public bool IsReadOnly => false;
+
+        public void Clear()
         {
-            if (table[index] != DELETED && table[index] == key)
-                return true;
-
-            index = (index + 1) % size;
-            if (index == start)
-                break;
+            _table = new KeyValuePair<TKey, TValue>?[_size];
+            _count = 0;
         }
 
-        return false;
-    }
-
-    public void Delete(int key)
-    {
-        int index = Hash(key);
-        int start = index;
-
-        while (table[index] != null)
+        public void Add(KeyValuePair<TKey, TValue> item)
         {
-            if (table[index] != DELETED && table[index] == key)
+            Add(item.Key, item.Value);
+        }
+
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            return TryGetValue(item.Key, out TValue value) && EqualityComparer<TValue>.Default.Equals(value, item.Value);
+        }
+
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0 || arrayIndex > array.Length)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+            if (array.Length - arrayIndex < Count)
+                throw new ArgumentException("Insufficient space.");
+
+            foreach (var pair in this)
             {
-                table[index] = DELETED;
-                return;
+                array[arrayIndex++] = pair;
             }
-
-            index = (index + 1) % size;
-            if (index == start)
-                break;
         }
 
-        Console.WriteLine("Key not found to delete.");
-    }
-
-    public void PrintTable()
-    {
-        for (int i = 0; i < size; i++)
+        public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            Console.Write($"[{i}]: ");
-            if (table[i] == null)
-                Console.WriteLine("Empty");
-            else if (table[i] == DELETED)
-                Console.WriteLine("Deleted");
-            else
-                Console.WriteLine(table[i]);
+            if (Contains(item))
+            {
+                return Remove(item.Key);
+            }
+            return false;
         }
-        
-        
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            foreach (var kv in _table)
+            {
+                if (kv.HasValue)
+                    yield return kv.Value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
