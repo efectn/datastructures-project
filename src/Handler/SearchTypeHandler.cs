@@ -6,6 +6,7 @@ using datastructures_project.Search.Tokenizer;
 
 namespace datastructures_project.Handler
 {
+
     public class SearchTypeHandler
     {
         public static List<SearchResponseDto>? _searchDoubleHashing(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query)
