@@ -256,6 +256,46 @@ namespace datastructures_project.Handler
             return results;
         }
 
+        public static List<SearchResponseDto>? _searchLevenshtein(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query)
+        {
+            // Increment the search counter
+            SearchHandler.searchCounter.Add(1);
+
+            // Tokenize the query
+            var tokens = tokenizer.Tokenize(query);
+            if (tokens.Count == 0)
+            {
+                return null;
+            }
+
+            // Apply levenshtein distance and wildcard search support
+            var newTokens = score.Trie.GetTokens(tokens);
+
+            // Calculate the score
+            var termFreqs = score.Calculate(newTokens.ToArray());
+            if (termFreqs.Count == 0)
+            {
+                return null;
+            }
+
+            // Sort the results by score and create the response dto
+            var sortedResults = termFreqs.OrderByDescending(x => x.Value).ToList();
+            var results = new List<SearchResponseDto>();
+
+            foreach (var (docId, scoreValue) in sortedResults)
+            {
+                var document = documentService.GetDocument(docId);
+                results.Add(new SearchResponseDto
+                {
+                    Title = document.Title,
+                    Description = document.Description,
+                    Url = document.Url,
+                    Score = scoreValue
+                });
+            }
+
+            return results;
+        }
 
 
     }
