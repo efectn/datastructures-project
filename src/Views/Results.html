@@ -1,9 +1,54 @@
 <main>
+    <!-- Sağ üstte sabitlenmiş performans süresi tablosu -->
+   <div class="performance-metrics" style="position: fixed; top: 20px; right: 20px; background: #f9f9f9; padding: 12px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); font-family: Arial, sans-serif; font-size: 14px; z-index: 1000;">
+    <h4 style="margin-top: 0; font-size: 16px; text-align: center;">Arama Süreleri (ms)</h4>
+    <table style="width: 100%;">
+        {{ for item in PerfResults }}
+        <tr>
+            <td><strong>{{ item.Name }}</strong></td>
+            <td style="text-align: right;">{{ item.Time }}</td>
+        </tr>
+        {{ end }}
+    </table>
+</div>
+
+    <!-- Sayfa içeriği -->
+    <a class="back-link mdl-button mdl-js-button mdl-button--accent" href="{{route 'index'}}">&larr; Aramaya Dön</a>
+    <div class="results-container">
+        <h2>Arama Sonuçları</h2>
+
+        {{ if !Results }}
+            <p class="no-results">Arama sonuçları bulunamadı.</p>
+        {{ end }}
+
+        {{ if Info }}
+            <p class="no-results">{{ Info }}</p>
+        {{ end }}
+
+        {{ for result in Results }}
+            <div class="result-item">
+                <h3 class="result-title">{{ result.title }}</h3>
+                <div class="result-url"><a href="{{ result.url }}">{{ result.url }}</a></div>
+                <p class="result-snippet">
+                    {{ result.description }}
+                    <br>
+                    <b>Arama Skoru:</b> {{ result.score }}
+                </p>
+            </div>
+        {{ end }}
+    </div>
+</main>
+
+
+
+<!--
+<main>
     <a class="back-link mdl-button mdl-js-button mdl-button--accent" href="{{route 'index'}}">&larr; Aramaya Dön</a>
     <div class="results-container">
         <h2>Arama Sonuçları</h2>
         <!-- Vertical list of search results -->
-        {{if !Results}}
+<!--
+    {{if !Results}}
             <p class="no-results">Arama sonuçları bulunamadı.</p>
         {{end}}
         
@@ -24,3 +69,4 @@
         {{ end }}
     </div>
 </main>
+-->
