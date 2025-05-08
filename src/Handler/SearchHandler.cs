@@ -6,6 +6,7 @@ using datastructures_project.Search.Score;
 using datastructures_project.Search.Tokenizer;
 using datastructures_project.Template;
 
+
 namespace datastructures_project.Handler;
 
 public class SearchHandler
