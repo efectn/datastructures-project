@@ -39,16 +39,22 @@
     - [x] Visualise the data with Grafana.
   - [x] Docker integration.
 - [ ] Implement hashtable functions.
-  - [ ] Separate chaining.
-  - [ ] Linear probing.
-  - [ ] Quadratic probing.
-  - [ ] Double hashing.
-  - [ ] Create unit-tests for all hashtable functions.
+  - [x] Separate chaining.
+  - [x] Linear probing.
+  - [x] Quadratic probing.
+  - [x] Double hashing.
+  - [x] Create unit-tests for all hashtable functions.
+  - [ ] Create various hashing functions for hashtables.
+  - [ ] Make hashtables selectable on search time.
+  - [ ] Visualize hashtable content with a simple web page.
   - [ ] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
   - [ ] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
 - [ ] Implement B-tree for indexers.
   - [ ] Create unit-tests for B-tree.
   - [ ] Create benchmarks and compare B-tree with other hashtable functions.
+- [ ] Implement Red black tree for indexers.
+  - [ ] Create unit-tests for Red black tree.
+  - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
 
 # Used Algorithms & Data Structures
 
