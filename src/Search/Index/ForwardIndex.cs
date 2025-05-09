@@ -29,6 +29,12 @@ public class ForwardIndex : IIndex
         _tag = tag;
     }
     
+    public ForwardIndex(ITrie trie)
+    {
+        _index = new Dictionary<int, HashSet<(string, int)>>();
+        _trie = trie;
+        _tag = "";
+    } 
     public void Add(int docId, string[] words)
     {
         // Count the term frequency of each word in the document and remove duplications

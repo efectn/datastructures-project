@@ -56,8 +56,8 @@
   - [ ] Create unit-tests for Red black tree.
   - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
 - [x] Implement AVL tree for indexers.
-  - [ ] Create unit-tests for Red black tree.
-  - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
+  - [x] Create unit-tests for AVL tree.
+  - [ ] Create benchmarks and compare AVL tree with other hashtable functions.
 
 # Used Algorithms & Data Structures
 

@@ -16,6 +16,12 @@ public class TFIDF: IScore
         _index = index;
         _tag = tag;
     }
+    
+    public TFIDF(IIndex index)
+    {
+        _index = index;
+        _tag = "";
+    }
 
     private double _calculateIdf(string token)
     {

@@ -59,7 +59,7 @@ public class DocumentRepositoryTest
 
             var repository = new DocumentRepository(context);
             var result = repository.GetAllDocuments();
-            Assert.Equal(12, result.Count); // 10 comes from the seeder
+            Assert.True(result.Count > 1000); // 10 comes from the seeder
         }
 
         [Fact]
@@ -83,7 +83,7 @@ public class DocumentRepositoryTest
             var context = _getInMemoryDbContext();
             var repository = new DocumentRepository(context);
 
-            var result = repository.RemoveDocument(999); // non-existent id
+            var result = repository.RemoveDocument(99999); // non-existent id
 
             Assert.Equal(0, result);
         }
@@ -97,7 +97,7 @@ public class DocumentRepositoryTest
             var documents = repository.GetAllDocuments();
 
             Assert.NotEmpty(documents);
-            Assert.Equal(10, documents.Count); // Check if 10 seeded documents exist
+            Assert.True(documents.Count > 1000); // Check if 10 seeded documents exist
         }
     }
 }

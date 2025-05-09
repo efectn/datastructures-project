@@ -49,11 +49,15 @@ public class AVLTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where T
     // Ekleme işlemi
     public void Add(TKey key, TValue value)
     {
+        if (ContainsKey(key))
+            throw new ArgumentException("Key already exists.");
         root = Insert(root, key, value);
     }
 
     public void Add(KeyValuePair<TKey, TValue> item)
     {
+        if (ContainsKey(item.Key))
+            throw new ArgumentException("Key already exists.");
         Add(item.Key, item.Value);
     }
 

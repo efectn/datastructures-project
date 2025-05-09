@@ -23,7 +23,7 @@ public class DocumentServiceTests
         _repoMock.Setup(r => r.GetAllDocuments()).Returns(new List<datastructures_project.Database.Model.Document>());
         _tokenizerMock.Setup(t => t.Tokenize(It.IsAny<string>())).Returns(new List<string>());
 
-        _service = new DocumentService(_indexMock.Object, _tokenizerMock.Object, _repoMock.Object);
+        _service = new DocumentService([_indexMock.Object], _tokenizerMock.Object, _repoMock.Object);
     }
 
     [Fact]

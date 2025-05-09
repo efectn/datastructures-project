@@ -29,6 +29,13 @@ public class InvertedIndex : IIndex
         _trie = trie;
         _tag = tag;
     }
+    
+    public InvertedIndex(ITrie trie)
+    {
+        _index = new Dictionary<string, HashSet<(int, int)>>();
+        _trie = trie;
+        _tag = "";
+    }
 
     public void Add(int docId, string[] words)
     {

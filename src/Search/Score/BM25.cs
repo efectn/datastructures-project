@@ -20,6 +20,14 @@ public class BM25 : IScore
         _b = 0.75;
         _tag = tag;
     }
+    
+    public BM25(IIndex index)
+    {
+        _index = index;
+        _k1 = 1.2;
+        _b = 0.75;
+        _tag = "";
+    }
 
     public double CalculateIDF(string token)
     {
