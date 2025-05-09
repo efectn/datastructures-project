@@ -8,14 +8,17 @@ public class BM25 : IScore
     private readonly IIndex _index;
     private readonly double _k1;
     private readonly double _b;
+    private readonly string _tag;
     
     public ITrie Trie => _index.Trie;
+    public string Tag => _tag;
 
-    public BM25(IIndex index)
+    public BM25(IIndex index, string tag)
     {
         _index = index;
         _k1 = 1.2;
         _b = 0.75;
+        _tag = tag;
     }
 
     public double CalculateIDF(string token)

@@ -5,8 +5,8 @@
     <table style="width: 100%;">
         {{ for item in PerfResults }}
         <tr>
-            <td><strong>{{ item.Name }}</strong></td>
-            <td style="text-align: right;">{{ item.Time }}</td>
+            <td><strong>{{ item.key }}</strong></td>
+            <td style="text-align: right;">{{ item.value }}</td>
         </tr>
         {{ end }}
     </table>
@@ -38,35 +38,3 @@
         {{ end }}
     </div>
 </main>
-
-
-
-<!--
-<main>
-    <a class="back-link mdl-button mdl-js-button mdl-button--accent" href="{{route 'index'}}">&larr; Aramaya Dön</a>
-    <div class="results-container">
-        <h2>Arama Sonuçları</h2>
-        <!-- Vertical list of search results -->
-<!--
-    {{if !Results}}
-            <p class="no-results">Arama sonuçları bulunamadı.</p>
-        {{end}}
-        
-        {{if Info}}
-            <p class="no-results">{{Info}}</p>
-        {{end}}
-        
-        {{ for result in Results }}
-            <div class="result-item">
-                <h3 class="result-title">{{ result.title }}</h3>
-                <div class="result-url"><a href="{{ result.url }}">{{ result.url }}</a></div>
-                <p class="result-snippet">
-                    {{ result.description }}
-                    <br>
-                    <b>Arama Skoru:</b> {{ result.score }}
-                </p>
-            </div>
-        {{ end }}
-    </div>
-</main>
--->

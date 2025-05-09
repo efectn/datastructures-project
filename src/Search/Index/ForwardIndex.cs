@@ -4,10 +4,11 @@ namespace datastructures_project.Search.Index;
 
 public class ForwardIndex : IIndex
 {
-    private readonly Dictionary<int, HashSet<(string, int)>> _index; // term -> (word, termFrequency)
+    private readonly IDictionary<int, HashSet<(string, int)>> _index; // term -> (word, termFrequency)
     private readonly ITrie _trie;
-    public Dictionary<int, HashSet<(string, int)>> Index => _index;
+    public IDictionary<int, HashSet<(string, int)>> Index => _index;
     private double _averageDocLength;
+    private string _tag;
     
     public double AverageDoclength
     {
@@ -19,10 +20,13 @@ public class ForwardIndex : IIndex
         get => _trie;
     }
     
-    public ForwardIndex(ITrie trie)
+    public string Tag => _tag;
+    
+    public ForwardIndex(ITrie trie, IDictionary<int, HashSet<(string, int)>> index, string tag)
     {
-        _index = new Dictionary<int, HashSet<(string, int)>>();
+        _index = index ?? new Dictionary<int, HashSet<(string, int)>>();
         _trie = trie;
+        _tag = tag;
     }
     
     public void Add(int docId, string[] words)

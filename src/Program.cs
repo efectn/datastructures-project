@@ -2,6 +2,7 @@ using datastructures_project.Database;
 using datastructures_project.Database.Repository;
 using datastructures_project.Document;
 using datastructures_project.Handler;
+using datastructures_project.HashTables;
 using datastructures_project.Search.Index;
 using datastructures_project.Search.Score;
 using datastructures_project.Search.Tokenizer;
@@ -17,14 +18,48 @@ var tokenizer = new Tokenizer(builder.Configuration);
 var trie = new Trie();
 
 // Initialize the index
-IIndex index = null;
+IIndex[] indexes = new IIndex[7];
 switch (builder.Configuration["Search:Index"])
 {
     case "inverted":
-        index = new InvertedIndex(trie);
+        var invertedIndexDictionaries = new Dictionary<string, IDictionary<string, HashSet<(int, int)>>>
+        {
+            { "Dictionary", new Dictionary<string, HashSet<(int, int)>>(300) },
+            { "SortedList", new SortedList<string, HashSet<(int, int)>>(300) },
+            { "SortedDictionary", new SortedDictionary<string, HashSet<(int, int)>>() },
+            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(300) },
+            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(300) },
+            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(300) },
+            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300) }
+        };
+
+        var i = 0;
+        foreach (var dict in invertedIndexDictionaries)
+        {
+            indexes[i] = new InvertedIndex(trie, dict.Value, dict.Key);
+            i++;
+        }
+        
         break;
     case "forward":
-        index = new ForwardIndex(trie);
+        var forwardIndexDictionaries = new Dictionary<string, IDictionary<int, HashSet<(string, int)>>>
+        {
+            { "Dictionary", new Dictionary<int, HashSet<(string, int)>>(300) },
+            { "SortedList", new SortedList<int, HashSet<(string, int)>>(300) },
+            { "SortedDictionary", new SortedDictionary<int, HashSet<(string, int)>>() },
+            { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>(300) },
+            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(300) },
+            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(300) },
+            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(300) }
+        };
+        
+        i = 0;
+        foreach (var dict in forwardIndexDictionaries)
+        {
+            indexes[i] = new ForwardIndex(trie, dict.Value, dict.Key);
+            i++;
+        }
+        
         break;
     default:
         Console.WriteLine("Search:Index configuration is wrong. Avaialable options: inverted, forward");
@@ -32,14 +67,20 @@ switch (builder.Configuration["Search:Index"])
         break;
 }
 // Initialize the score
-IScore score = null;
+IScore[] score = new IScore[7];
 switch (builder.Configuration["Search:Score"])
 {
     case "bm25":
-        score = new BM25(index);
+        for (var j = 0; j < indexes.Length; j++)
+        {
+            score[j] = new BM25(indexes[j], indexes[j].Tag);
+        }
         break;
     case "tfidf":
-        score = new TFIDF(index);
+        for (var j = 0; j < indexes.Length; j++)
+        {
+            score[j] = new TFIDF(indexes[j], indexes[j].Tag);
+        }
         break;
     default:
         Console.WriteLine("Search:Score configuration is wrong. Avaialable options: bm25, tfidf");
@@ -56,12 +97,12 @@ databaseCtx.Database.EnsureCreated();
 var documentRepository = new DocumentRepository(databaseCtx);
 
 // Initialize the services
-var documentService = new DocumentService(index, tokenizer, documentRepository);
+var documentService = new DocumentService(indexes, tokenizer, documentRepository);
 
 
 // Register score service for searching
 builder.Services.AddSingleton<ITokenizer>(tokenizer);
-builder.Services.AddSingleton<IScore>(score);
+builder.Services.AddSingleton<IScore[]>(score);
 builder.Services.AddSingleton<IDocumentService>(documentService);
 
 // Register Scriban tempalte engine service

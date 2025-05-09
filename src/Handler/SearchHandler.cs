@@ -27,7 +27,7 @@ public class SearchHandler
         app.MapGet("/", _indexHandler).WithName("index");
     }
 
-    public static IResult _apiHandler(HttpContext ctx, ITokenizer tokenizer, IScore score, IDocumentService documentService, ILogger<SearchHandler> logger)
+    public static IResult _apiHandler(HttpContext ctx, ITokenizer tokenizer, IScore[] score, IDocumentService documentService, ILogger<SearchHandler> logger)
     {
         // Get the query parameters
         var query = ctx.Request.Query["q"];
@@ -41,8 +41,7 @@ public class SearchHandler
             query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
 
         // Perform the search
-        //var searchResults = _searchHandler(score, tokenizer, documentService, query);
-        var searchResults = SearchTypeHandler._searchLevenshtein(score, tokenizer, documentService, query);
+        var searchResults = _searchHandler(score[0], tokenizer, documentService, query);
 
         if (searchResults == null)
         {
@@ -53,7 +52,7 @@ public class SearchHandler
         return Results.Ok(searchResults);
     }
 
-    public static IResult _autocompleteHandler(HttpContext ctx, IScore score, ILogger<SearchHandler> logger) {
+    public static IResult _autocompleteHandler(HttpContext ctx, IScore[] scores, ILogger<SearchHandler> logger) {
         // Increment the autocomplete counter
         autocompleteCounter.Add(1);
         
@@ -67,8 +66,8 @@ public class SearchHandler
         // Log the request
         logger.LogInformation("Autocomplete request received for \"{query}\" query on {timestamp} at {path}",
             query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
-
-        return Results.Json(score.Trie.GetWords(query));
+        
+        return Results.Json(scores[0].Trie.GetWords(query));
     }
 
     public static IResult _indexHandler(HttpContext ctx, ScribanTemplateService scribanService)
@@ -80,8 +79,8 @@ public class SearchHandler
         }), "text/html");
     }
 
-    public static IResult _searchHtmlHandler(HttpContext ctx, ITokenizer tokenizer, IScore score,
-     IDocumentService documentService, ScribanTemplateService scribanService, ILogger<SearchHandler> logger)
+    public static IResult _searchHtmlHandler(HttpContext ctx, ITokenizer tokenizer, IScore[] scores,
+        IDocumentService documentService, ScribanTemplateService scribanService, ILogger<SearchHandler> logger, IConfiguration config)
     {
         // Get the query parameters
         var query = ctx.Request.Query["q"];
@@ -89,106 +88,81 @@ public class SearchHandler
         {
             return Results.BadRequest("q property is required!"); // TODO: error message instead
         }
-
+        
         // Log the request
         logger.LogInformation("Search request received for \"{query}\" query on {timestamp} at {path}",
             query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
-
-        // Define the search strategies
-        var searchStrategies = new Dictionary<string, Func<IScore, ITokenizer, IDocumentService, string, List<SearchResponseDto>?>>()
+        
+        // Perform the search
+        var results = new SortedList<string, List<SearchResponseDto>>();
+        var elapsedTimes = new SortedList<string, double>
         {
-            { "Linear Probing", SearchTypeHandler._searchLineerProbing },
-            { "Double Hashing", SearchTypeHandler._searchDoubleHashing },
-            { "Quadratic Probing", SearchTypeHandler._searchQuadraticProbing },
-            { "Seperate Chaining",  SearchTypeHandler._searchSeperateChaining },
-            { "levenshtein",  SearchTypeHandler._searchLevenshtein }
-            // You can add more search algorithms here.
+            {"Dictionary", 0.0 },
+            {"SortedList", 0.0},
+            {"SortedDictionary", 0.0},
+            {"DoubleHashing", 0.0},
+            {"LinearProbing", 0.0},
+            {"QuadraticProbing", 0.0},
+            {"SeparateChaining", 0.0}
         };
-
-        var performanceList = new List<Dictionary<string, object>>();
-        List<SearchResponseDto>? _tSearchResults = null;
-        double levenshteinElapsed = 0; // Variable to store Levenshtein time
-
-        // Run the search algorithms in a loop
-        foreach (var (name, method) in searchStrategies)
+        
+        foreach (var score in scores)
         {
-            var start = DateTime.Now;
-            var result = method(score, tokenizer, documentService, query);
-            var elapsed = (DateTime.Now - start).TotalMilliseconds;
-
-            // If the result is the first valid one (non-null), store it
-            if (_tSearchResults == null && result != null)
-                _tSearchResults = result;
-
-            // If it's Levenshtein, store its elapsed time
-            if (name == "levenshtein")
-            {
-                levenshteinElapsed = elapsed;
-            }
-
-            // Save performance results
-            performanceList.Add(new Dictionary<string, object>
-            {
-                { "Name", name },
-                { "Time", elapsed }
-            });
+            var timeBefore = DateTime.Now;
+            results[score.Tag] = _searchHandler(score, tokenizer, documentService, query);
+            elapsedTimes[score.Tag] = (DateTime.Now - timeBefore).TotalMilliseconds;
         }
-        // Get the Levenshtein search result once and store it
-        var levSearchResult = searchStrategies["levenshtein"](score, tokenizer, documentService, query);
 
-        // Now you can render the result
+        var showResultsOf = config["Search:ShowResultsOf"] ?? "Dictionary";
+        
         return Results.Content(scribanService.RenderWithLayout("Results", new Dictionary<string, object>
         {
             {"Title", query + " için Sonuçlar"},
-            {"Info", $"\"{query}\" için {levSearchResult?.Count} sonuç bulundu. Arama süresi: {levenshteinElapsed} ms."},
-            {"Results", levSearchResult},
-            { "PerfResults", performanceList }
+            {"Info", $"\"{query}\" için {results[showResultsOf].Count} sonuç bulundu. Arama süresi: {elapsedTimes[showResultsOf]} ms. Sonuçlar {showResultsOf} veri yapısı kullanılarak gösterildi."},
+            {"Results", results[showResultsOf]},
+            {"PerfResults", elapsedTimes}
         }), "text/html");
-       }
+    }
 
-    //public static List<SearchResponseDto>? _searchHandler(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query)
-    //{
-    //    // Increment the search counter
-    //    searchCounter.Add(1);
+
+    public static List<SearchResponseDto>? _searchHandler(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query)
+    {
+        // Increment the search counter
+        searchCounter.Add(1);
         
-    //    // Tokenize the query
-    //    var tokens = tokenizer.Tokenize(query);
-    //    if (tokens.Count == 0)
-    //    {
-    //        return null;
-    //    }
+        // Tokenize the query
+        var tokens = tokenizer.Tokenize(query);
+        if (tokens.Count == 0)
+        {
+            return null;
+        }
 
-    //    // Apply levenshtein distance and wildcard search support
-    //    var newTokens = score.Trie.GetTokens(tokens);
+        // Apply levenshtein distance and wildcard search support
+        var newTokens = score.Trie.GetTokens(tokens);
         
-    //    // Calculate the score
-    //    var termFreqs = score.Calculate(newTokens.ToArray());
-    //    if (termFreqs.Count == 0)
-    //    {
-    //        return null;
-    //    }
+        // Calculate the score
+        var termFreqs = score.Calculate(newTokens.ToArray());
+        if (termFreqs.Count == 0)
+        {
+            return null;
+        }
         
-    //    // Sort the results by score and create the response dto
-    //    var sortedResults = termFreqs.OrderByDescending(x => x.Value).ToList();
-    //    var results = new List<SearchResponseDto>();
+        // Sort the results by score and create the response dto
+        var sortedResults = termFreqs.OrderByDescending(x => x.Value).ToList();
+        var results = new List<SearchResponseDto>();
         
-    //    foreach (var (docId, scoreValue) in sortedResults)
-    //    {
-    //        var document = documentService.GetDocument(docId);
-    //        results.Add(new SearchResponseDto
-    //        {
-    //            Title = document.Title,
-    //            Description = document.Description,
-    //            Url = document.Url,
-    //            Score = scoreValue
-    //        });
-    //    }
+        foreach (var (docId, scoreValue) in sortedResults)
+        {
+            var document = documentService.GetDocument(docId);
+            results.Add(new SearchResponseDto
+            {
+                Title = document.Title,
+                Description = document.Description,
+                Url = document.Url,
+                Score = scoreValue
+            });
+        }
 
-    //    return results;
-    //}
-
-    
-    
-    
-
+        return results;
+    }
 }

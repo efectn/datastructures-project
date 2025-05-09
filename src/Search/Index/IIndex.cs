@@ -5,6 +5,7 @@ namespace datastructures_project.Search.Index;
 public interface IIndex
 {
     ITrie Trie { get; }
+    string Tag { get; }
     double AverageDoclength { get; }
     void Add(int docId, string[] words);
     int DocumentCount();

@@ -7,10 +7,10 @@ namespace datastructures_project.Document;
 public class DocumentService : IDocumentService
 {
     private IDocumentRepository _documentRepository;
-    private readonly IIndex _index;
+    private readonly IIndex[] _index;
     private readonly ITokenizer _tokenizer;
 
-    public DocumentService(IIndex index, ITokenizer tokenizer, IDocumentRepository documentRepository)
+    public DocumentService(IIndex[] index, ITokenizer tokenizer, IDocumentRepository documentRepository)
     {
         _documentRepository = documentRepository;
         _index = index;
@@ -21,7 +21,10 @@ public class DocumentService : IDocumentService
         foreach (var document in documents)
         {
             var tokens = tokenizer.Tokenize(document.Title);
-            index.Add(document.Id, tokens.ToArray());
+            foreach (var i in index)
+            {
+                i.Add(document.Id, tokens.ToArray());
+            }
         }
     }
 
@@ -35,7 +38,10 @@ public class DocumentService : IDocumentService
         }
         
         // Add the document to the index
-        _index.Add(doc.Id, _tokenizer.Tokenize(document.Title).ToArray());
+        foreach (var i in _index)
+        {
+            i.Add(doc.Id, _tokenizer.Tokenize(document.Title).ToArray());
+        }
     }
 
     public void RemoveDocument(int id)
@@ -46,7 +52,10 @@ public class DocumentService : IDocumentService
             throw new ArgumentException("Document with this id does not exist");
         }
         
-        _index.Remove(id);
+        foreach (var i in _index)
+        {
+            i.Remove(id);
+        }
     }
 
     public Database.Model.Document GetDocument(int id)

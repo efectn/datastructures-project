@@ -6,12 +6,15 @@ namespace datastructures_project.Search.Score;
 public class TFIDF: IScore
 {
     private readonly IIndex _index;
+    private readonly string _tag;
     
     public ITrie Trie => _index.Trie;
+    public string Tag => _tag;
 
-    public TFIDF(IIndex index)
+    public TFIDF(IIndex index, string tag)
     {
         _index = index;
+        _tag = tag;
     }
 
     private double _calculateIdf(string token)

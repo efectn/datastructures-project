@@ -1,12 +1,15 @@
+using System.Collections;
+
 namespace datastructures_project.Search.Index;
 
 using datastructures_project.Search.Trie;
 public class InvertedIndex : IIndex
 {
-    private readonly Dictionary<string, HashSet<(int, int)>> _index; // term -> (docId, termFrequency)
+    private readonly IDictionary<string, HashSet<(int, int)>> _index; // term -> (docId, termFrequency)
     private readonly ITrie _trie;
-    public Dictionary<string, HashSet<(int, int)>> Index => _index;
+    public IDictionary<string, HashSet<(int, int)>> Index => _index;
     private double _averageDocLength;
+    private string _tag;
     
     public double AverageDoclength
     {
@@ -17,11 +20,14 @@ public class InvertedIndex : IIndex
     {
         get => _trie;
     }
+
+    public string Tag => _tag;
     
-    public InvertedIndex(ITrie trie)
+    public InvertedIndex(ITrie trie, IDictionary<string, HashSet<(int, int)>> index, string tag)
     {
-        _index = new Dictionary<string, HashSet<(int, int)>>();
+        _index = index ?? new Dictionary<string, HashSet<(int, int)>>();
         _trie = trie;
+        _tag = tag;
     }
 
     public void Add(int docId, string[] words)
