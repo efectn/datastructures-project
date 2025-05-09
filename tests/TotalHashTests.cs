@@ -15,6 +15,7 @@ namespace datastructures_project.Tests
                 "Quadratic" => new QuadraticProbingHashTable<string, int>(),
                 "Double" => new DoubleHashingHashTable<string, int>(),
                 "Separate" => new SeparateChainingHashTable<string, int>(),
+                "AVL" => new AVLTreeDictionary<string, int>(), // AVL Tree'yi ekledik
                 _ => throw new ArgumentException("Invalid type")
             };
         }
@@ -24,6 +25,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Add_And_Retrieve_Works(string type)
         {
             var table = CreateTable(type);
@@ -39,6 +41,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Add_DuplicateKey_Throws(string type)
         {
             var table = CreateTable(type);
@@ -51,6 +54,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Indexer_Set_Works(string type)
         {
             var table = CreateTable(type);
@@ -63,6 +67,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Remove_Works(string type)
         {
             var table = CreateTable(type);
@@ -76,6 +81,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void TryGetValue_Returns_Expected_Results(string type)
         {
             var table = CreateTable(type);
@@ -91,6 +97,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Keys_And_Values_Work(string type)
         {
             var table = CreateTable(type);
@@ -106,6 +113,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Clear_Removes_All(string type)
         {
             var table = CreateTable(type);
@@ -121,6 +129,7 @@ namespace datastructures_project.Tests
         [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
+        [InlineData("AVL")]
         public void Enumerator_Works(string type)
         {
             var table = CreateTable(type);
