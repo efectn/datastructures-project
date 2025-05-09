@@ -7,4 +7,5 @@ public interface IDocumentService
     void RemoveDocument(int id);
     Document GetDocument(int id);
     List<Database.Model.Document> GetAllDocuments();
+    int TotalDocumentsCount();
 }

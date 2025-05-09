@@ -118,7 +118,7 @@ public class SearchHandler
         return Results.Content(scribanService.RenderWithLayout("Results", new Dictionary<string, object>
         {
             {"Title", query + " için Sonuçlar"},
-            {"Info", $"\"{query}\" için {results[showResultsOf].Count} sonuç bulundu. Arama süresi: {elapsedTimes[showResultsOf]} ms. Sonuçlar {showResultsOf} veri yapısı kullanılarak gösterildi."},
+            {"Info", $"\"{query}\" için {documentService.TotalDocumentsCount()} sonuç içinden {results[showResultsOf].Count} sonuç bulundu. Arama süresi: {elapsedTimes[showResultsOf]} ms. Sonuçlar {showResultsOf} veri yapısı kullanılarak gösterildi."},
             {"Results", results[showResultsOf]},
             {"PerfResults", elapsedTimes}
         }), "text/html");

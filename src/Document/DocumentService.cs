@@ -73,4 +73,9 @@ public class DocumentService : IDocumentService
     {
         return _documentRepository.GetAllDocuments();
     }
+    
+    public int TotalDocumentsCount()
+    {
+        return _documentRepository.AllDocumentsCount();
+    }
 }

@@ -45,7 +45,7 @@
   - [x] Double hashing.
   - [x] Create unit-tests for all hashtable functions.
   - [ ] Create various hashing functions for hashtables.
-  - [ ] Make hashtables selectable on search time.
+  - [x] Make hashtables selectable on search time with the help of configuartion.
   - [ ] Visualize hashtable content with a simple web page.
   - [ ] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
   - [ ] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.

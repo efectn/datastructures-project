@@ -28,8 +28,8 @@ switch (builder.Configuration["Search:Index"])
             { "SortedList", new SortedList<string, HashSet<(int, int)>>(300) },
             { "SortedDictionary", new SortedDictionary<string, HashSet<(int, int)>>() },
             { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(300) },
-            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(300) },
-            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(300) },
+            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(300000) },
+            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(300000) },
             { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300) }
         };
 
@@ -48,8 +48,8 @@ switch (builder.Configuration["Search:Index"])
             { "SortedList", new SortedList<int, HashSet<(string, int)>>(300) },
             { "SortedDictionary", new SortedDictionary<int, HashSet<(string, int)>>() },
             { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>(300) },
-            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(300) },
-            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(300) },
+            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(300000) },
+            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(300000) },
             { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(300) }
         };
         

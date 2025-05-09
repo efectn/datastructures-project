@@ -82,9 +82,30 @@ public class DocumentSeeder
                 Description = "Günlük hayatın stresini azaltmak için bilimsel yöntemler."
             }
         };
-
+        
         modelBuilder.Entity<Model.Document>().HasData(
             documents
         );
+        
+        var documentsJson = File.ReadAllText("Resources/documents.json");
+        var documentsJsonParsed = System.Text.Json.JsonSerializer.Deserialize<List<Dictionary<string, string>>>(documentsJson);
+        if (documentsJsonParsed == null)
+        {
+            Console.WriteLine("Warning: Could not parse documents.json");
+        }
+        
+        // Add the documents to the model builder
+        var i = 11;
+        foreach (var document in documentsJsonParsed)
+        {
+            var doc = new Model.Document
+            {
+                Id = i++,
+                Title = document["title"],
+                Url = document["url"],
+                Description = document["description"]
+            };
+            modelBuilder.Entity<Model.Document>().HasData(doc);
+        }
     }
 }

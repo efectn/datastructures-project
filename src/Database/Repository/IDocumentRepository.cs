@@ -6,4 +6,5 @@ public interface IDocumentRepository
     Model.Document GetDocumentById(int id);
     List<Model.Document> GetAllDocuments();
     int RemoveDocument(int id);
+    int AllDocumentsCount();
 }

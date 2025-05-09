@@ -40,4 +40,9 @@ public class DocumentRepository : IDocumentRepository
         _ctx.Documents.Remove(document);
         return _ctx.SaveChanges();
     }
+    
+    public int AllDocumentsCount()
+    {
+        return _ctx.Documents.Count();
+    }
 }
