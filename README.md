@@ -48,11 +48,14 @@
   - [x] Make hashtables selectable on search time with the help of configuartion.
   - [ ] Visualize hashtable content with a simple web page.
   - [ ] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
-  - [ ] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
+  - [x] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
 - [ ] Implement B-tree for indexers.
   - [ ] Create unit-tests for B-tree.
   - [ ] Create benchmarks and compare B-tree with other hashtable functions.
 - [ ] Implement Red black tree for indexers.
+  - [ ] Create unit-tests for Red black tree.
+  - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
+- [x] Implement AVL tree for indexers.
   - [ ] Create unit-tests for Red black tree.
   - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
 

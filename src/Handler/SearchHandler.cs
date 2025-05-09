@@ -109,7 +109,7 @@ public class SearchHandler
         foreach (var score in scores)
         {
             var timeBefore = DateTime.Now;
-            results[score.Tag] = _searchHandler(score, tokenizer, documentService, query);
+            results[score.Tag] = _searchHandler(score, tokenizer, documentService, query) ?? [];
             elapsedTimes[score.Tag] = (DateTime.Now - timeBefore).TotalMilliseconds;
         }
 
