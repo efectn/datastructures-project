@@ -18,7 +18,7 @@ var tokenizer = new Tokenizer(builder.Configuration);
 var trie = new Trie();
 
 // Initialize the index
-IIndex[] indexes = new IIndex[7];
+IIndex[] indexes = new IIndex[8];
 switch (builder.Configuration["Search:Index"])
 {
     case "inverted":
@@ -30,7 +30,8 @@ switch (builder.Configuration["Search:Index"])
             { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(300) },
             { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(300000) },
             { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(300000) },
-            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300) }
+            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300) },
+            { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
         };
 
         var i = 0;
@@ -50,7 +51,8 @@ switch (builder.Configuration["Search:Index"])
             { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>(300) },
             { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(300000) },
             { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(300000) },
-            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(300) }
+            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(300) },
+            { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
         };
         
         i = 0;
@@ -67,7 +69,7 @@ switch (builder.Configuration["Search:Index"])
         break;
 }
 // Initialize the score
-IScore[] score = new IScore[7];
+IScore[] score = new IScore[8];
 switch (builder.Configuration["Search:Score"])
 {
     case "bm25":
