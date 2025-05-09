@@ -52,7 +52,7 @@ switch (builder.Configuration["Search:Index"])
             { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(300000) },
             { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(300000) },
             { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(300) },
-            { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
+            { "AVL", new AVLTreeDictionary<int, HashSet<(string, int)>>() }
         };
         
         i = 0;
