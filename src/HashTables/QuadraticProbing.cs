@@ -193,6 +193,36 @@ namespace datastructures_project.HashTables
             }
             return false;
         }
+        
+        public bool IsInCollide(TKey key)
+        {
+            int index = Hash(key);
+
+            for (int i = 0; i < _size; i++)
+            {
+                int probe = (index + i * i) % _size;
+                var entry = _table[probe];
+                
+                if (entry.HasValue && !entry!.Value.IsTombstone  && EqualityComparer<TKey>.Default.Equals(entry!.Value.Key, key))
+                {
+                    return i > 0;
+                }
+            }
+            return false;
+        }
+        
+        public List<int> GetTombstones()
+        {
+            var tombstones = new List<int>();
+            for (int i = 0; i < _size; i++)
+            {
+                if (_table[i].HasValue && _table[i]!.Value.IsTombstone)
+                {
+                    tombstones.Add(i);
+                }
+            }
+            return tombstones;
+        }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {

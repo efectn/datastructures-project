@@ -14,7 +14,7 @@ namespace datastructures_project.HashTables
             public bool IsTombstone; // Tombstone flag
         }
 
-        private Entry[] _entries;
+        private Entry?[] _entries;
         private int _count;
         private int _size;
         private readonly IEqualityComparer<TKey> _comparer;
@@ -23,15 +23,15 @@ namespace datastructures_project.HashTables
         public DoubleHashingHashTable(int capacity = 16, IEqualityComparer<TKey> comparer = null)
         {
             _size = GetNextPrime(capacity);
-            _entries = new Entry[_size];
+            _entries = new Entry?[_size];
             _comparer = comparer ?? EqualityComparer<TKey>.Default;
         }
 
         // Primary hash function
-        private int Hash1(TKey key) => Math.Abs(_comparer.GetHashCode(key)) % _size;
+        private int Hash1(TKey key) => Math.Abs(_comparer.GetHashCode(key) & 0x7FFFFFFF) % _size;
 
         // Secondary hash function (must never return 0)
-        private int Hash2(TKey key) => 1 + (Math.Abs(_comparer.GetHashCode(key)) % (_size - 1));
+        private int Hash2(TKey key) => 1 + (Math.Abs(_comparer.GetHashCode(key) & 0x7FFFFFFF) % (_size - 1));
 
         private static int GetNextPrime(int min)
         {
@@ -72,15 +72,15 @@ namespace datastructures_project.HashTables
         {
             int newSize = GetNextPrime(_size * 2);
             var oldEntries = _entries;
-            _entries = new Entry[newSize];
+            _entries = new Entry?[newSize];
             _size = newSize;
             _count = 0;
 
             foreach (var entry in oldEntries)
             {
-                if (!entry.IsTombstone && entry.Key != null) // Only add non-tombstone entries
+                if (entry.HasValue && !entry.Value.IsTombstone) // Only add non-tombstone entries
                 {
-                    AddInternal(entry.Key, entry.Value);
+                    AddInternal(entry.Value.Key, entry.Value.Value);
                 }
             }
         }
@@ -90,41 +90,20 @@ namespace datastructures_project.HashTables
             int hash1 = Hash1(key);
             int hash2 = Hash2(key);
             int i = 0;
-            int? firstTombstone = null;
 
             while (i < _size)
             {
                 int index = (hash1 + i * hash2) % _size;
-
-                if (_entries[index].Key == null || EqualityComparer<TKey>.Default.Equals(_entries[index].Key, default(TKey)))
+                if (!_entries[index].HasValue || _entries[index]!.Value.IsTombstone)
                 {
-                    // Boş yer bulundu, ama önce tombstone varsa onu kullan
-                    int targetIndex = firstTombstone ?? index;
-                    _entries[targetIndex] = new Entry { Key = key, Value = value, IsTombstone = false };
+                    _entries[index] = new Entry { Key = key, Value = value, IsTombstone = false };
                     _count++;
                     return;
                 }
 
-                if (_entries[index].IsTombstone && firstTombstone == null)
-                {
-                    firstTombstone = index;
-                }
-
-                if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key))
-                {
-                    throw new ArgumentException("Key already exists");
-                }
-
                 i++;
             }
-
-            if (firstTombstone.HasValue)
-            {
-                _entries[firstTombstone.Value] = new Entry { Key = key, Value = value, IsTombstone = false };
-                _count++;
-                return;
-            }
-
+            
             throw new InvalidOperationException("Hash table is full");
         }
 
@@ -154,14 +133,14 @@ namespace datastructures_project.HashTables
             {
                 int index = (hash1 + i * hash2) % _size;
                 
-                ref Entry entry = ref _entries[index];
+                var entry = _entries[index];
 
-                if (entry.Key == null && !entry.IsTombstone)
+                if (!entry.HasValue)
                     break;
 
-                if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key)) // Skip tombstones
+                if (!entry.Value.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Value.Key, key))
                 {
-                    value = _entries[index].Value;
+                    value = entry.Value.Value;
                     return true;
                 }
 
@@ -186,16 +165,14 @@ namespace datastructures_project.HashTables
             {
                 int index = (hash1 + i * hash2) % _size;
                 
-                ref Entry entry = ref _entries[index];
+                var entry = _entries[index];
 
-                if (entry.Key == null && !entry.IsTombstone)
+                if (!entry.HasValue)
                     break;
 
-                if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key))
+                if (!entry.Value.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Value.Key, key))
                 {
-                    _entries[index].IsTombstone = true; // Mark as tombstone
-                    _entries[index].Key = default!;
-                    _entries[index].Value = default!;
+                    _entries[index] = new Entry { Key = entry.Value.Key, Value = default!, IsTombstone = true };
                     _count--;
                     return true;
                 }
@@ -205,6 +182,41 @@ namespace datastructures_project.HashTables
 
             return false;
         }
+        
+        public bool IsInCollide(TKey key) 
+        {
+            int hash1 = Hash1(key);
+            int hash2 = Hash2(key);
+            int i = 0;
+
+            while (i < _size)
+            {
+                int index = (hash1 + i * hash2) % _size;
+                var entry = _entries[index];
+                
+                if (entry.HasValue && !entry.Value.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Value.Key, key))
+                {
+                    return i > 0;
+                }
+
+                i++;
+            }
+
+            return false;
+        }
+        
+        public List<int> GetTombstones() 
+        {
+            var tombstones = new List<int>();
+            for (int i = 0; i < _size; i++)
+            {
+                if (_entries[i].HasValue && _entries[i]!.Value.IsTombstone)
+                {
+                    tombstones.Add(i);
+                }
+            }
+            return tombstones;
+        }
 
         public TValue this[TKey key]
         {
@@ -213,32 +225,38 @@ namespace datastructures_project.HashTables
             {
                 if (key == null) throw new ArgumentNullException(nameof(key));
 
-                if (TryGetValue(key, out _))
-                {
-                    int hash1 = Hash1(key);
-                    int hash2 = Hash2(key);
-                    int i = 0;
+                int hash1 = Hash1(key);
+                int hash2 = Hash2(key);
+                int i = 0;
 
-                    while (i < _size)
-                    {
-                        int index = (hash1 + i * hash2) % _size;
-                        if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key))
-                        {
-                            _entries[index].Value = value;
-                            return;
-                        }
-                        i++;
-                    }
-                }
-                else
+                while (i < _size)
                 {
-                    Add(key, value);
+                    int index = (hash1 + i * hash2) % _size;
+                    var entry = _entries[index];
+
+                    if (!entry.HasValue)
+                        break;
+
+                    if (!entry.Value.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Value.Key, key))
+                    {
+                        _entries[index] = new Entry { Key = key, Value = value, IsTombstone = false };
+                        return;
+                    }
+                    i++;
                 }
+
+                Add(key, value);
             }
         }
 
-        public ICollection<TKey> Keys => _entries.Where(e => !e.IsTombstone && e.Key != null).Select(e => e.Key).ToList();
-        public ICollection<TValue> Values => _entries.Where(e => !e.IsTombstone && e.Key != null).Select(e => e.Value).ToList();
+        public ICollection<TKey> Keys => _entries
+            .Where(e => e.HasValue && !e.Value.IsTombstone)
+            .Select(e => e!.Value.Key).ToList();
+
+        public ICollection<TValue> Values => _entries
+            .Where(e => e.HasValue && !e.Value.IsTombstone)
+            .Select(e => e!.Value.Value).ToList();
+
         public int Count => _count;
         public bool IsReadOnly => false;
 
@@ -261,9 +279,9 @@ namespace datastructures_project.HashTables
 
             foreach (var entry in _entries)
             {
-                if (!entry.IsTombstone)
+                if (entry.HasValue && !entry.Value.IsTombstone)
                 {
-                    array[arrayIndex++] = new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
+                    array[arrayIndex++] = new KeyValuePair<TKey, TValue>(entry.Value.Key, entry.Value.Value);
                 }
             }
         }
@@ -274,9 +292,9 @@ namespace datastructures_project.HashTables
         {
             foreach (var entry in _entries)
             {
-                if (entry.Key != null && !entry.IsTombstone)
+                if (entry.HasValue && !entry.Value.IsTombstone)
                 {
-                    yield return new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
+                    yield return new KeyValuePair<TKey, TValue>(entry.Value.Key, entry.Value.Value);
                 }
             }
         }

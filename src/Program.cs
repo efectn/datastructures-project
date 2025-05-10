@@ -12,6 +12,7 @@ using datastructures_project.Template;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 var tokenizer = new Tokenizer(builder.Configuration);
@@ -149,5 +150,6 @@ SearchHandler.RegisterHandlers(app);
 // Register document handlers
 DocumentHandler.RegisterHandlers(app);
 
-app.Run();
+HashTableHandler.RegisterHandlers(app);
 
+app.Run();
