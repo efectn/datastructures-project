@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using BenchmarkDotNet.Running;
+using datastructures_project.HashTables;
+using HashTableBenchmarks;
 using tests.Search.Index;
 using tests.Search.Score;
 
@@ -17,3 +19,21 @@ BenchmarkRunner.Run<BM25Benchmark>();
 
 Console.WriteLine("TF-IDF Benchmarks:");
 BenchmarkRunner.Run<TFIDFBenchmark>();
+
+Console.WriteLine("Linear Probing Hash Table Benchmarks:");
+BenchmarkRunner.Run<LinearProbingHashTableBenchmark>();
+
+Console.WriteLine("Double Hashing Hash Table Benchmarks:");
+BenchmarkRunner.Run<DoubleHashingHashTableBenchmark>();
+
+Console.WriteLine("Separate Chaining Hash Table Benchmarks:");
+BenchmarkRunner.Run<SeparateChainingHashTableBenchmark>();
+
+Console.WriteLine("Double Hashing Hash Table Benchmarks:");
+BenchmarkRunner.Run<DoubleHashingHashTableBenchmark>();
+
+Console.WriteLine("AVL Tree Benchmarks:");
+BenchmarkRunner.Run<AVLTreeBenchmark>();
+
+Console.WriteLine("Dictionary Benchmarks:");
+BenchmarkRunner.Run<DictionaryBenchmark>();

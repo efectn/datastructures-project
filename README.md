@@ -47,7 +47,7 @@
   - [ ] Create various hashing functions for hashtables.
   - [x] Make hashtables selectable on search time with the help of configuartion.
   - [ ] Visualize hashtable content with a simple web page.
-  - [ ] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
+  - [x] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
   - [x] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
 - [ ] Implement B-tree for indexers.
   - [ ] Create unit-tests for B-tree.
@@ -57,7 +57,7 @@
   - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
 - [x] Implement AVL tree for indexers.
   - [x] Create unit-tests for AVL tree.
-  - [ ] Create benchmarks and compare AVL tree with other hashtable functions.
+  - [x] Create benchmarks and compare AVL tree with other hashtable functions.
 
 # Used Algorithms & Data Structures
 
