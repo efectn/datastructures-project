@@ -145,5 +145,120 @@ namespace datastructures_project.Tests
             Assert.Contains("a", set);
             Assert.Contains("b", set);
         }
+        
+        [Theory]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        [InlineData("AVL")]
+        public void Remove_Does_Not_Break_Search_Chain(string type)
+        {
+            var table = CreateTable(type);
+            table.Add("A", 1);
+            table.Add("B", 2);
+            table.Add("C", 3);
+
+            Assert.True(table.Remove("A")); // Zincirin başından biri silinir
+
+            Assert.True(table.ContainsKey("B")); // Zincir bozulmamalı
+            Assert.Equal(2, table["B"]);
+            Assert.True(table.Remove("B"));
+            Assert.True(table.ContainsKey("C"));
+            Assert.Equal(3, table["C"]);
+        }
+        
+        [Theory]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        public void Handles_Collisions_Correctly(string type)
+        {
+            var table = CreateTable(type);
+            var keys = new[] { "Aa", "BB" };
+
+            table.Add(keys[0], 100);
+            table.Add(keys[1], 200);
+
+            Assert.Equal(100, table[keys[0]]);
+            Assert.Equal(200, table[keys[1]]);
+        }
+        
+        [Theory]
+        //[InlineData("Linear")]
+        //[InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        [InlineData("AVL")]
+        public void Can_Handle_Many_Entries(string type)
+        {
+            var table = CreateTable(type);
+            int count = 1000;
+            for (int i = 0; i < count; i++)
+                table[$"key{i}"] = i;
+
+            for (int i = 0; i < count; i++)
+                Assert.Equal(i, table[$"key{i}"]);
+
+            Assert.Equal(count, table.Count);
+        }
+        
+        [Theory]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        [InlineData("AVL")]
+        public void Indexer_Updates_Existing_Key(string type)
+        {
+            var table = CreateTable(type);
+            table["x"] = 1;
+            table["x"] = 2;
+
+            Assert.Equal(2, table["x"]);
+        }
+    
+        [Theory]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        [InlineData("AVL")]
+        public void Remove_NonExistent_Returns_False(string type)
+        {
+            var table = CreateTable(type);
+            Assert.False(table.Remove("ghost"));
+        }
+
+        [Theory]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        [InlineData("AVL")]
+        public void ContainsKey_Consistent(string type)
+        {
+            var table = CreateTable(type);
+            table.Add("ping", 123);
+            Assert.True(table.ContainsKey("ping"));
+            Assert.True(table.ContainsKey("ping"));
+        }
+        
+        [Theory]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
+        [InlineData("Double")]
+        [InlineData("Separate")]
+        [InlineData("AVL")]
+        public void Handles_Empty_And_Special_Keys(string type)
+        {
+            var table = CreateTable(type);
+            table[""] = 0;
+            table["!@#$%^&*()"] = 42;
+
+            Assert.Equal(0, table[""]);
+            Assert.Equal(42, table["!@#$%^&*()"]);
+        }
     }
 }

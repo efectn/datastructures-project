@@ -46,7 +46,7 @@
   - [x] Create unit-tests for all hashtable functions.
   - [ ] Create various hashing functions for hashtables.
   - [x] Make hashtables selectable on search time with the help of configuartion.
-  - [ ] Visualize hashtable content with a simple web page.
+  - [x] Visualize hashtable content with a simple web page.
   - [x] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
   - [x] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
 - [ ] Implement B-tree for indexers.

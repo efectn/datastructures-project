@@ -11,7 +11,7 @@ namespace datastructures_project.HashTables
         {
             public TKey Key;
             public TValue Value;
-            public bool IsActive;
+            public bool IsTombstone; // Tombstone flag
         }
 
         private Entry[] _entries;
@@ -35,13 +35,11 @@ namespace datastructures_project.HashTables
 
         private static int GetNextPrime(int min)
         {
-            // Precomputed primes would be better for production code
             foreach (int candidate in Primes)
             {
                 if (candidate >= min) return candidate;
             }
             
-            // Fallback for very large sizes
             for (int i = min | 1; i < int.MaxValue; i += 2)
             {
                 if (IsPrime(i)) return i;
@@ -62,7 +60,6 @@ namespace datastructures_project.HashTables
             return true;
         }
 
-        // Sample primes for table sizes
         private static readonly int[] Primes = {
             3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761,
             919, 1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
@@ -81,7 +78,7 @@ namespace datastructures_project.HashTables
 
             foreach (var entry in oldEntries)
             {
-                if (entry.IsActive)
+                if (!entry.IsTombstone && entry.Key != null) // Only add non-tombstone entries
                 {
                     AddInternal(entry.Key, entry.Value);
                 }
@@ -93,23 +90,44 @@ namespace datastructures_project.HashTables
             int hash1 = Hash1(key);
             int hash2 = Hash2(key);
             int i = 0;
+            int? firstTombstone = null;
 
             while (i < _size)
             {
                 int index = (hash1 + i * hash2) % _size;
-                
-                if (!_entries[index].IsActive)
+
+                if (_entries[index].Key == null || EqualityComparer<TKey>.Default.Equals(_entries[index].Key, default(TKey)))
                 {
-                    _entries[index] = new Entry { Key = key, Value = value, IsActive = true };
+                    // Boş yer bulundu, ama önce tombstone varsa onu kullan
+                    int targetIndex = firstTombstone ?? index;
+                    _entries[targetIndex] = new Entry { Key = key, Value = value, IsTombstone = false };
                     _count++;
                     return;
+                }
+
+                if (_entries[index].IsTombstone && firstTombstone == null)
+                {
+                    firstTombstone = index;
+                }
+
+                if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key))
+                {
+                    throw new ArgumentException("Key already exists");
                 }
 
                 i++;
             }
 
+            if (firstTombstone.HasValue)
+            {
+                _entries[firstTombstone.Value] = new Entry { Key = key, Value = value, IsTombstone = false };
+                _count++;
+                return;
+            }
+
             throw new InvalidOperationException("Hash table is full");
         }
+
 
         public void Add(TKey key, TValue value)
         {
@@ -136,12 +154,12 @@ namespace datastructures_project.HashTables
             {
                 int index = (hash1 + i * hash2) % _size;
                 
-                if (!_entries[index].IsActive)
-                {
-                    break;
-                }
+                ref Entry entry = ref _entries[index];
 
-                if (_comparer.Equals(_entries[index].Key, key))
+                if (entry.Key == null && !entry.IsTombstone)
+                    break;
+
+                if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key)) // Skip tombstones
                 {
                     value = _entries[index].Value;
                     return true;
@@ -150,12 +168,10 @@ namespace datastructures_project.HashTables
                 i++;
             }
 
-            value = default;
+            value = default!;
             return false;
         }
 
-        // Rest of the IDictionary<TKey, TValue> implementation
-        // (similar to your other implementations)
         public bool ContainsKey(TKey key) => TryGetValue(key, out _);
 
         public bool Remove(TKey key)
@@ -170,14 +186,16 @@ namespace datastructures_project.HashTables
             {
                 int index = (hash1 + i * hash2) % _size;
                 
-                if (!_entries[index].IsActive)
-                {
-                    break;
-                }
+                ref Entry entry = ref _entries[index];
 
-                if (_comparer.Equals(_entries[index].Key, key))
+                if (entry.Key == null && !entry.IsTombstone)
+                    break;
+
+                if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key))
                 {
-                    _entries[index].IsActive = false;
+                    _entries[index].IsTombstone = true; // Mark as tombstone
+                    _entries[index].Key = default!;
+                    _entries[index].Value = default!;
                     _count--;
                     return true;
                 }
@@ -194,10 +212,9 @@ namespace datastructures_project.HashTables
             set
             {
                 if (key == null) throw new ArgumentNullException(nameof(key));
-                
+
                 if (TryGetValue(key, out _))
                 {
-                    // Update existing
                     int hash1 = Hash1(key);
                     int hash2 = Hash2(key);
                     int i = 0;
@@ -205,7 +222,7 @@ namespace datastructures_project.HashTables
                     while (i < _size)
                     {
                         int index = (hash1 + i * hash2) % _size;
-                        if (_comparer.Equals(_entries[index].Key, key))
+                        if (!_entries[index].IsTombstone && _comparer.Equals(_entries[index].Key, key))
                         {
                             _entries[index].Value = value;
                             return;
@@ -215,14 +232,13 @@ namespace datastructures_project.HashTables
                 }
                 else
                 {
-                    // Add new
                     Add(key, value);
                 }
             }
         }
 
-        public ICollection<TKey> Keys => _entries.Where(e => e.IsActive).Select(e => e.Key).ToList();
-        public ICollection<TValue> Values => _entries.Where(e => e.IsActive).Select(e => e.Value).ToList();
+        public ICollection<TKey> Keys => _entries.Where(e => !e.IsTombstone && e.Key != null).Select(e => e.Key).ToList();
+        public ICollection<TValue> Values => _entries.Where(e => !e.IsTombstone && e.Key != null).Select(e => e.Value).ToList();
         public int Count => _count;
         public bool IsReadOnly => false;
 
@@ -245,7 +261,7 @@ namespace datastructures_project.HashTables
 
             foreach (var entry in _entries)
             {
-                if (entry.IsActive)
+                if (!entry.IsTombstone)
                 {
                     array[arrayIndex++] = new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
                 }
@@ -258,7 +274,7 @@ namespace datastructures_project.HashTables
         {
             foreach (var entry in _entries)
             {
-                if (entry.IsActive)
+                if (entry.Key != null && !entry.IsTombstone)
                 {
                     yield return new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
                 }

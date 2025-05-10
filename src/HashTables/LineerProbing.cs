@@ -7,17 +7,24 @@ namespace datastructures_project.HashTables
 {
     public class LinearProbingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private KeyValuePair<TKey, TValue>?[] _table;
+        private struct Entry
+        {
+            public TKey Key;
+            public TValue Value;
+            public bool IsTombstone;
+        }
+
+        private Entry[] _table;
         private int _size;
         private int _count;
 
         public LinearProbingHashTable(int size = 16)
         {
             _size = size;
-            _table = new KeyValuePair<TKey, TValue>?[_size];
+            _table = new Entry[_size];
         }
 
-        private int Hash(TKey key) => Math.Abs(key!.GetHashCode()) % _size;
+        private int Hash(TKey key) => (key!.GetHashCode() & 0x7FFFFFFF) % _size;
 
         public void Add(TKey key, TValue value)
         {
@@ -25,60 +32,78 @@ namespace datastructures_project.HashTables
                 throw new ArgumentException("Key already exists.");
 
             int index = Hash(key);
-            int i = 0;
+            int firstTombstone = -1;
 
-            while (_table[(index + i) % _size].HasValue)
+            for (int i = 0; i < _size; i++)
             {
-                i++;
-                if (i >= _size) throw new InvalidOperationException("Hash table is full.");
+                int probe = (index + i) % _size;
+                ref Entry entry = ref _table[probe];
+
+                if (entry.Key == null)
+                {
+                    if (!entry.IsTombstone)
+                    {
+                        if (firstTombstone != -1) probe = firstTombstone;
+                        _table[probe] = new Entry { Key = key, Value = value, IsTombstone = false };
+                        _count++;
+                        return;
+                    }
+                    
+                    if (firstTombstone == -1)
+                    {
+                        firstTombstone = probe;
+                    }
+                }
             }
 
-            _table[(index + i) % _size] = new KeyValuePair<TKey, TValue>(key, value);
-            _count++;
+            throw new InvalidOperationException("Hash table is full.");
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
             int index = Hash(key);
-            int i = 0;
 
-            while (_table[(index + i) % _size].HasValue)
+            for (int i = 0; i < _size; i++)
             {
-                var kv = _table[(index + i) % _size]!.Value;
-                if (kv.Key!.Equals(key))
+                int probe = (index + i) % _size;
+                ref Entry entry = ref _table[probe];
+
+                if (entry.Key == null && !entry.IsTombstone)
+                    break;
+
+                if (entry.Key != null && !entry.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Key, key))
                 {
-                    value = kv.Value;
+                    value = entry.Value;
                     return true;
                 }
-                i++;
-                if (i >= _size) break;
             }
 
             value = default!;
             return false;
         }
 
-        public bool ContainsKey(TKey key)
-        {
-            return TryGetValue(key, out _);
-        }
+        public bool ContainsKey(TKey key) => TryGetValue(key, out _);
 
         public bool Remove(TKey key)
         {
             int index = Hash(key);
-            int i = 0;
 
-            while (_table[(index + i) % _size].HasValue)
+            for (int i = 0; i < _size; i++)
             {
-                var kv = _table[(index + i) % _size]!.Value;
-                if (kv.Key!.Equals(key))
+                int probe = (index + i) % _size;
+                ref Entry entry = ref _table[probe];
+
+                if (entry.Key == null && !entry.IsTombstone)
+                    break;
+
+                if (entry.Key != null && !entry.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Key, key))
                 {
-                    _table[(index + i) % _size] = null;
+                    entry.Key = default!;
+                    entry.Value = default!;
+                    entry.IsTombstone = true;
                     _count--;
                     return true;
                 }
-                i++;
-                if (i >= _size) break;
             }
 
             return false;
@@ -95,28 +120,49 @@ namespace datastructures_project.HashTables
             }
             set
             {
-                // Update if exists
                 int index = Hash(key);
-                int i = 0;
+                int firstTombstone = -1;
 
-                while (_table[(index + i) % _size].HasValue)
+                for (int i = 0; i < _size; i++)
                 {
-                    if (_table[(index + i) % _size]!.Value.Key!.Equals(key))
+                    int probe = (index + i) % _size;
+                    ref Entry entry = ref _table[probe];
+
+                    if (entry.Key == null)
                     {
-                        _table[(index + i) % _size] = new KeyValuePair<TKey, TValue>(key, value);
+                        if (!entry.IsTombstone)
+                        {
+                            if (firstTombstone != -1) probe = firstTombstone;
+                            _table[probe] = new Entry { Key = key, Value = value, IsTombstone = false };
+                            _count++;
+                            return;
+                        }
+                        
+                        if (firstTombstone == -1)
+                        {
+                            firstTombstone = probe;
+                        }
+                    }
+                    else if (!entry.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Key, key))
+                    {
+                        entry.Value = value;
                         return;
                     }
-                    i++;
                 }
 
-                // Insert new
-                Add(key, value);
+                throw new InvalidOperationException("Hash table is full.");
             }
         }
 
-        public ICollection<TKey> Keys => _table.Where(x => x.HasValue).Select(x => x!.Value.Key).ToList();
+        public ICollection<TKey> Keys => _table
+            .Where(e => e.Key != null && !e.IsTombstone)
+            .Select(e => e.Key)
+            .ToList();
 
-        public ICollection<TValue> Values => _table.Where(x => x.HasValue).Select(x => x!.Value.Value).ToList();
+        public ICollection<TValue> Values => _table
+            .Where(e => e.Key != null && !e.IsTombstone)
+            .Select(e => e.Value)
+            .ToList();
 
         public int Count => _count;
 
@@ -124,7 +170,7 @@ namespace datastructures_project.HashTables
 
         public void Clear()
         {
-            _table = new KeyValuePair<TKey, TValue>?[_size];
+            _table = new Entry[_size];
             _count = 0;
         }
 
@@ -148,32 +194,25 @@ namespace datastructures_project.HashTables
                 throw new ArgumentException("Insufficient space.");
 
             foreach (var pair in this)
-            {
                 array[arrayIndex++] = pair;
-            }
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
             if (Contains(item))
-            {
                 return Remove(item.Key);
-            }
             return false;
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            foreach (var kv in _table)
+            foreach (var entry in _table)
             {
-                if (kv.HasValue)
-                    yield return kv.Value;
+                if (entry.Key != null && !entry.IsTombstone)
+                    yield return new KeyValuePair<TKey, TValue>(entry.Key, entry.Value);
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
