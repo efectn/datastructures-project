@@ -28,10 +28,10 @@ switch (builder.Configuration["Search:Index"])
             { "Dictionary", new Dictionary<string, HashSet<(int, int)>>(300) },
             { "SortedList", new SortedList<string, HashSet<(int, int)>>(300) },
             { "SortedDictionary", new SortedDictionary<string, HashSet<(int, int)>>() },
-            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(300) },
+            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(300000) },
             { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(300000) },
             { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(300000) },
-            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300) },
+            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300000) },
             { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
         };
 
