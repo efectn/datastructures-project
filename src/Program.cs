@@ -19,7 +19,7 @@ var tokenizer = new Tokenizer(builder.Configuration);
 var trie = new Trie();
 
 // Initialize the index
-IIndex[] indexes = new IIndex[8];
+IIndex[] indexes = new IIndex[10];
 switch (builder.Configuration["Search:Index"])
 {
     case "inverted":
@@ -32,7 +32,9 @@ switch (builder.Configuration["Search:Index"])
             { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>() },
             { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>() },
             { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>() },
-            { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
+            { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() },
+            { "BTree", new BTreeDictionary<string, HashSet<(int, int)>>() },
+            { "RedBlack", new RedBlackTree<string, HashSet<(int, int)>>() }
         };
         builder.Services.AddSingleton(invertedIndexDictionaries);
 
@@ -54,7 +56,9 @@ switch (builder.Configuration["Search:Index"])
             { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>() },
             { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>() },
             { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>() },
-            { "AVL", new AVLTreeDictionary<int, HashSet<(string, int)>>() }
+            { "AVL", new AVLTreeDictionary<int, HashSet<(string, int)>>() },
+            { "BTree", new BTreeDictionary<int, HashSet<(string, int)>>() },
+            { "RedBlack", new RedBlackTree<int, HashSet<(string, int)>>() }
         };
         builder.Services.AddSingleton(forwardIndexDictionaries);
         
@@ -72,7 +76,7 @@ switch (builder.Configuration["Search:Index"])
         break;
 }
 // Initialize the score
-IScore[] score = new IScore[8];
+IScore[] score = new IScore[10];
 switch (builder.Configuration["Search:Score"])
 {
     case "bm25":

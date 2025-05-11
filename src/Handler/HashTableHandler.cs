@@ -39,7 +39,7 @@ public class HashTableHandler
     public static IResult _invertedIndexHandler(HttpContext ctx, Dictionary<string, IDictionary<string, HashSet<(int, int)>>> indexes)
     {
         var type = ctx.Request.RouteValues["type"]?.ToString();
-        string[] notWantedTypes = ["Dictionary", "SortedList", "SortedDictionary", "SeparateChaining", "AVL"];
+        string[] notWantedTypes = ["Dictionary", "SortedList", "SortedDictionary", "SeparateChaining", "AVL", "BTree", "RedBlack"];
         if (type == "SeparateChaining" && indexes.ContainsKey(type))
         {
             return _invertedIndexSeparateChainingHandler(ctx, indexes);
@@ -86,7 +86,7 @@ public class HashTableHandler
     public static IResult _forwardIndexHandler(HttpContext ctx, Dictionary<string, IDictionary<int, HashSet<(string, int)>>> indexes)
     {
         var type = ctx.Request.RouteValues["type"]?.ToString();
-        string[] notWantedTypes = ["Dictionary", "SortedList", "SortedDictionary", "SeparateChaining", "AVL"];
+        string[] notWantedTypes = ["Dictionary", "SortedList", "SortedDictionary", "SeparateChaining", "AVL", "BTree", "RedBlack"];
         if (type == "SeparateChaining" && indexes.ContainsKey(type))
         {
             return _forwardIndexSeparateChainingHandler(ctx, indexes);
