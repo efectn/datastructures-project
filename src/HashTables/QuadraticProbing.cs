@@ -19,9 +19,9 @@ namespace datastructures_project.HashTables
         private int _count;
         private const double LoadFactorThreshold = 0.7;
 
-        public QuadraticProbingHashTable(int size = 16)
+        public QuadraticProbingHashTable(int size = 17)
         {
-            _size = size;
+            _size = GetNextPrime(size);
             _table = new Entry?[_size];
         }
 
@@ -29,7 +29,7 @@ namespace datastructures_project.HashTables
 
         private void Resize()
         {
-            int newSize = _size * 2;
+            int newSize = GetNextPrime(_size * 2);
             var oldTable = _table;
 
             _table = new Entry?[newSize];
@@ -40,12 +40,22 @@ namespace datastructures_project.HashTables
             {
                 if (entry.HasValue && !entry.Value.IsTombstone)
                 {
-                    Insert(entry.Value.Key, entry.Value.Value);
+                    InsertWithoutResize(entry.Value.Key, entry.Value.Value);
                 }
             }
         }
 
         private void Insert(TKey key, TValue value)
+        {
+            if (_count >= _size * LoadFactorThreshold)
+            {
+                Resize();
+            }
+
+            InsertWithoutResize(key, value);
+        }
+
+        private void InsertWithoutResize(TKey key, TValue value)
         {
             int index = Hash(key);
             for (int i = 0; i < _size; i++)
@@ -66,11 +76,6 @@ namespace datastructures_project.HashTables
         {
             if (ContainsKey(key))
                 throw new ArgumentException("Key already exists.");
-
-            if (_count >= _size * LoadFactorThreshold)
-            {
-                Resize();
-            }
 
             Insert(key, value);
         }
@@ -177,14 +182,12 @@ namespace datastructures_project.HashTables
             _count = 0;
         }
 
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
-            Add(item.Key, item.Value);
-        }
+        public void Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            return TryGetValue(item.Key, out TValue value) && EqualityComparer<TValue>.Default.Equals(value, item.Value);
+            return TryGetValue(item.Key, out TValue value) &&
+                   EqualityComparer<TValue>.Default.Equals(value, item.Value);
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
@@ -247,5 +250,27 @@ namespace datastructures_project.HashTables
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        // --- Prime Utilities ---
+        private int GetNextPrime(int start)
+        {
+            while (true)
+            {
+                if (IsPrime(start)) return start;
+                start++;
+            }
+        }
+
+        private bool IsPrime(int number)
+        {
+            if (number < 2) return false;
+            if (number == 2) return true;
+            if (number % 2 == 0) return false;
+
+            for (int i = 3; i * i <= number; i += 2)
+                if (number % i == 0) return false;
+
+            return true;
+        }
     }
 }
