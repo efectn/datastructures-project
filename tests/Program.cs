@@ -37,3 +37,10 @@ BenchmarkRunner.Run<AVLTreeBenchmark>();
 
 Console.WriteLine("Dictionary Benchmarks:");
 BenchmarkRunner.Run<DictionaryBenchmark>();
+
+
+Console.WriteLine("BTree Benchmarks:");
+BenchmarkRunner.Run<BTreeBenchmark>();
+
+Console.WriteLine("Red Black Tree Benchmarks:");
+BenchmarkRunner.Run<RedBlackTreeBenchmark>();

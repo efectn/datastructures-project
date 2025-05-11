@@ -230,7 +230,11 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
         {
             if (node.Children[idx].Keys.Count < _t)
                 Fill(node, idx);
-            Remove(node.Children[idx], key);
+            
+            if (idx >= node.Children.Count)
+                Remove(node.Children[idx - 1], key); 
+            else
+                Remove(node.Children[idx], key);
         }
     }
 

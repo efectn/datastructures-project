@@ -38,7 +38,7 @@
   - [x] Prometheus integration for tracing.
     - [x] Visualise the data with Grafana.
   - [x] Docker integration.
-- [ ] Implement hashtable functions.
+- [x] Implement hashtable functions.
   - [x] Separate chaining.
   - [x] Linear probing.
   - [x] Quadratic probing.
@@ -51,10 +51,10 @@
   - [x] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
 - [x] Implement B-tree for indexers.
   - [x] Create unit-tests for B-tree.
-  - [ ] Create benchmarks and compare B-tree with other hashtable functions.
+  - [x] Create benchmarks and compare B-tree with other hashtable functions.
 - [x] Implement Red black tree for indexers.
   - [x] Create unit-tests for Red black tree.
-  - [ ] Create benchmarks and compare Red black tree with other hashtable functions.
+  - [x] Create benchmarks and compare Red black tree with other hashtable functions.
 - [x] Implement AVL tree for indexers.
   - [x] Create unit-tests for AVL tree.
   - [x] Create benchmarks and compare AVL tree with other hashtable functions.

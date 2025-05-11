@@ -4,7 +4,11 @@ using System.Collections.Generic;
 
 namespace datastructures_project.HashTables
 {
-    enum NodeColor { Red, Black }
+    enum NodeColor
+    {
+        Red,
+        Black
+    }
 
     class Node<TKey, TValue> where TKey : IComparable<TKey>
     {
@@ -57,7 +61,7 @@ namespace datastructures_project.HashTables
             FixViolation(newNode);
             count++;
         }
-        
+
         private void AddInternal(TKey key, TValue value)
         {
             var newNode = new Node<TKey, TValue>(key, value);
@@ -151,7 +155,8 @@ namespace datastructures_project.HashTables
                 if (x == parent.Left)
                 {
                     var w = parent.Right;
-                    if (w.Color == NodeColor.Red)
+
+                    if (w != null && w.Color == NodeColor.Red)
                     {
                         w.Color = NodeColor.Black;
                         parent.Color = NodeColor.Red;
@@ -159,10 +164,12 @@ namespace datastructures_project.HashTables
                         w = parent.Right;
                     }
 
-                    if ((w.Left == null || w.Left.Color == NodeColor.Black) &&
-                        (w.Right == null || w.Right.Color == NodeColor.Black))
+                    if (w == null ||
+                        ((w.Left == null || w.Left.Color == NodeColor.Black) &&
+                         (w.Right == null || w.Right.Color == NodeColor.Black)))
                     {
-                        w.Color = NodeColor.Red;
+                        if (w != null)
+                            w.Color = NodeColor.Red;
                         x = parent;
                         parent = x.Parent;
                     }
@@ -170,23 +177,33 @@ namespace datastructures_project.HashTables
                     {
                         if (w.Right == null || w.Right.Color == NodeColor.Black)
                         {
-                            if (w.Left != null) w.Left.Color = NodeColor.Black;
-                            w.Color = NodeColor.Red;
-                            RotateRight(w);
-                            w = parent.Right;
+                            if (w.Left != null)
+                                w.Left.Color = NodeColor.Black;
+                            if (w != null)
+                            {
+                                w.Color = NodeColor.Red;
+                                RotateRight(w);
+                                w = parent.Right;
+                            }
                         }
 
-                        w.Color = parent.Color;
-                        parent.Color = NodeColor.Black;
-                        if (w.Right != null) w.Right.Color = NodeColor.Black;
-                        RotateLeft(parent);
+                        if (w != null)
+                        {
+                            w.Color = parent.Color;
+                            parent.Color = NodeColor.Black;
+                            if (w.Right != null)
+                                w.Right.Color = NodeColor.Black;
+                            RotateLeft(parent);
+                        }
+
                         x = root;
                     }
                 }
                 else
                 {
                     var w = parent.Left;
-                    if (w.Color == NodeColor.Red)
+
+                    if (w != null && w.Color == NodeColor.Red)
                     {
                         w.Color = NodeColor.Black;
                         parent.Color = NodeColor.Red;
@@ -194,10 +211,12 @@ namespace datastructures_project.HashTables
                         w = parent.Left;
                     }
 
-                    if ((w.Right == null || w.Right.Color == NodeColor.Black) &&
-                        (w.Left == null || w.Left.Color == NodeColor.Black))
+                    if (w == null ||
+                        ((w.Right == null || w.Right.Color == NodeColor.Black) &&
+                         (w.Left == null || w.Left.Color == NodeColor.Black)))
                     {
-                        w.Color = NodeColor.Red;
+                        if (w != null)
+                            w.Color = NodeColor.Red;
                         x = parent;
                         parent = x.Parent;
                     }
@@ -205,16 +224,25 @@ namespace datastructures_project.HashTables
                     {
                         if (w.Left == null || w.Left.Color == NodeColor.Black)
                         {
-                            if (w.Right != null) w.Right.Color = NodeColor.Black;
-                            w.Color = NodeColor.Red;
-                            RotateLeft(w);
-                            w = parent.Left;
+                            if (w.Right != null)
+                                w.Right.Color = NodeColor.Black;
+                            if (w != null)
+                            {
+                                w.Color = NodeColor.Red;
+                                RotateLeft(w);
+                                w = parent.Left;
+                            }
                         }
 
-                        w.Color = parent.Color;
-                        parent.Color = NodeColor.Black;
-                        if (w.Left != null) w.Left.Color = NodeColor.Black;
-                        RotateRight(parent);
+                        if (w != null)
+                        {
+                            w.Color = parent.Color;
+                            parent.Color = NodeColor.Black;
+                            if (w.Left != null)
+                                w.Left.Color = NodeColor.Black;
+                            RotateRight(parent);
+                        }
+
                         x = root;
                     }
                 }
@@ -223,7 +251,7 @@ namespace datastructures_project.HashTables
             if (x != null)
                 x.Color = NodeColor.Black;
         }
-
+        
         public bool ContainsKey(TKey key) => FindNode(root, key) != null;
 
         public bool TryGetValue(TKey key, out TValue value)
@@ -234,6 +262,7 @@ namespace datastructures_project.HashTables
                 value = node.Value;
                 return true;
             }
+
             value = default;
             return false;
         }
@@ -282,6 +311,7 @@ namespace datastructures_project.HashTables
                 else if (cmp > 0) node = node.Right;
                 else return node;
             }
+
             return null;
         }
 
@@ -327,6 +357,7 @@ namespace datastructures_project.HashTables
             {
                 root.Value = node.Value;
             }
+
             return root;
         }
 
@@ -384,6 +415,7 @@ namespace datastructures_project.HashTables
                             RotateLeft(parent);
                             node = parent;
                         }
+
                         RotateRight(grandParent);
                         var temp = parent.Color;
                         parent.Color = grandParent.Color;
@@ -408,6 +440,7 @@ namespace datastructures_project.HashTables
                             RotateRight(parent);
                             node = parent;
                         }
+
                         RotateLeft(grandParent);
                         var temp = parent.Color;
                         parent.Color = grandParent.Color;
@@ -416,6 +449,7 @@ namespace datastructures_project.HashTables
                     }
                 }
             }
+
             root.Color = NodeColor.Black;
         }
     }
