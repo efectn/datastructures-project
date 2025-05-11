@@ -44,7 +44,6 @@
   - [x] Quadratic probing.
   - [x] Double hashing.
   - [x] Create unit-tests for all hashtable functions.
-  - [ ] Create various hashing functions for hashtables.
   - [x] Make hashtables selectable on search time with the help of configuartion.
   - [x] Visualize hashtable content with a simple web page.
   - [x] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
