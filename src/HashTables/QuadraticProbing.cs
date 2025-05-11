@@ -17,6 +17,7 @@ namespace datastructures_project.HashTables
         private Entry?[] _table;
         private int _size;
         private int _count;
+        private const double LoadFactorThreshold = 0.7;
 
         public QuadraticProbingHashTable(int size = 16)
         {
@@ -24,42 +25,64 @@ namespace datastructures_project.HashTables
             _table = new Entry?[_size];
         }
 
-        private int Hash(TKey key) => Math.Abs(key!.GetHashCode() & 0x7FFFFFFF) % _size;
+        private int Hash(TKey key) => (key!.GetHashCode() & 0x7FFFFFFF) % _size;
 
-        public void Add(TKey key, TValue value)
+        private void Resize()
         {
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (ContainsKey(key)) throw new ArgumentException("Key already exists.");
+            int newSize = _size * 2;
+            var oldTable = _table;
 
-            int index = Hash(key);
-            int i = 0;
+            _table = new Entry?[newSize];
+            _size = newSize;
+            _count = 0;
 
-            while (i < _size)
+            foreach (var entry in oldTable)
             {
-                int probeIndex = (index + i * i) % _size;
-                if (!_table[probeIndex].HasValue || _table[probeIndex]!.Value.IsTombstone)
+                if (entry.HasValue && !entry.Value.IsTombstone)
                 {
-                    _table[probeIndex] = new Entry { Key = key, Value = value, IsTombstone = false };
+                    Insert(entry.Value.Key, entry.Value.Value);
+                }
+            }
+        }
+
+        private void Insert(TKey key, TValue value)
+        {
+            int index = Hash(key);
+            for (int i = 0; i < _size; i++)
+            {
+                int probe = (index + i * i) % _size;
+                if (!_table[probe].HasValue || _table[probe]!.Value.IsTombstone)
+                {
+                    _table[probe] = new Entry { Key = key, Value = value, IsTombstone = false };
                     _count++;
                     return;
                 }
-                i++;
             }
 
             throw new InvalidOperationException("Hash table is full.");
         }
 
+        public void Add(TKey key, TValue value)
+        {
+            if (ContainsKey(key))
+                throw new ArgumentException("Key already exists.");
+
+            if (_count >= _size * LoadFactorThreshold)
+            {
+                Resize();
+            }
+
+            Insert(key, value);
+        }
+
         public bool TryGetValue(TKey key, out TValue value)
         {
-            if (key == null) throw new ArgumentNullException(nameof(key));
-
             int index = Hash(key);
-            int i = 0;
 
-            while (i < _size)
+            for (int i = 0; i < _size; i++)
             {
-                int probeIndex = (index + i * i) % _size;
-                var entry = _table[probeIndex];
+                int probe = (index + i * i) % _size;
+                var entry = _table[probe];
 
                 if (!entry.HasValue)
                     break;
@@ -69,7 +92,6 @@ namespace datastructures_project.HashTables
                     value = entry.Value.Value;
                     return true;
                 }
-                i++;
             }
 
             value = default!;
@@ -80,27 +102,22 @@ namespace datastructures_project.HashTables
 
         public bool Remove(TKey key)
         {
-            if (key == null) throw new ArgumentNullException(nameof(key));
-
             int index = Hash(key);
-            int i = 0;
 
-            while (i < _size)
+            for (int i = 0; i < _size; i++)
             {
-                int probeIndex = (index + i * i) % _size;
-                var entry = _table[probeIndex];
+                int probe = (index + i * i) % _size;
+                var entry = _table[probe];
 
                 if (!entry.HasValue)
                     break;
 
                 if (!entry.Value.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry.Value.Key, key))
                 {
-                    _table[probeIndex] = new Entry { Key = entry.Value.Key, Value = default!, IsTombstone = true };
+                    _table[probe] = new Entry { Key = entry.Value.Key, Value = default!, IsTombstone = true };
                     _count--;
                     return true;
                 }
-
-                i++;
             }
 
             return false;
@@ -110,7 +127,7 @@ namespace datastructures_project.HashTables
         {
             get
             {
-                if (TryGetValue(key, out var val))
+                if (TryGetValue(key, out TValue val))
                     return val;
 
                 throw new KeyNotFoundException();
@@ -180,20 +197,16 @@ namespace datastructures_project.HashTables
                 throw new ArgumentException("Insufficient space.");
 
             foreach (var pair in this)
-            {
                 array[arrayIndex++] = pair;
-            }
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
             if (Contains(item))
-            {
                 return Remove(item.Key);
-            }
             return false;
         }
-        
+
         public bool IsInCollide(TKey key)
         {
             int index = Hash(key);
@@ -202,15 +215,15 @@ namespace datastructures_project.HashTables
             {
                 int probe = (index + i * i) % _size;
                 var entry = _table[probe];
-                
-                if (entry.HasValue && !entry!.Value.IsTombstone  && EqualityComparer<TKey>.Default.Equals(entry!.Value.Key, key))
+
+                if (entry.HasValue && !entry!.Value.IsTombstone && EqualityComparer<TKey>.Default.Equals(entry!.Value.Key, key))
                 {
                     return i > 0;
                 }
             }
             return false;
         }
-        
+
         public List<int> GetTombstones()
         {
             var tombstones = new List<int>();
