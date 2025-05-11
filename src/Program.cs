@@ -28,10 +28,10 @@ switch (builder.Configuration["Search:Index"])
             { "Dictionary", new Dictionary<string, HashSet<(int, int)>>(300) },
             { "SortedList", new SortedList<string, HashSet<(int, int)>>(300) },
             { "SortedDictionary", new SortedDictionary<string, HashSet<(int, int)>>() },
-            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(300) },
-            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(300000) },
-            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(300000) },
-            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(300) },
+            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(3) },
+            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(30000) },
+            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(30000) },
+            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(3) },
             { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
         };
 
@@ -49,10 +49,10 @@ switch (builder.Configuration["Search:Index"])
             { "Dictionary", new Dictionary<int, HashSet<(string, int)>>(300) },
             { "SortedList", new SortedList<int, HashSet<(string, int)>>(300) },
             { "SortedDictionary", new SortedDictionary<int, HashSet<(string, int)>>() },
-            { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>(300) },
-            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(300000) },
-            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(300000) },
-            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(300) },
+            { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>(3) },
+            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(30000) },
+            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(30000) },
+            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(3) },
             { "AVL", new AVLTreeDictionary<int, HashSet<(string, int)>>() }
         };
         
@@ -150,6 +150,6 @@ SearchHandler.RegisterHandlers(app);
 // Register document handlers
 DocumentHandler.RegisterHandlers(app);
 
-HashTableHandler.RegisterHandlers(app);
+//HashTableHandler.RegisterHandlers(app);
 
 app.Run();
