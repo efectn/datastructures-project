@@ -1,4 +1,4 @@
-﻿namespace datastructures_project.Tests.Search;
+﻿namespace datastructures_project.HashTables;
 
 using System;
 using System.Collections;
@@ -14,7 +14,7 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
         public bool IsLeaf = true;
     }
 
-    private readonly int _t; // minimum degree
+    private readonly int _t;
     private Node _root;
 
     public BTreeDictionary(int degree = 2)
@@ -26,6 +26,9 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
 
     public void Add(TKey key, TValue value)
     {
+        if (TryGetValue(key, out _))
+            throw new ArgumentException("Key already exists.");
+
         if (_root.Keys.Count == 2 * _t - 1)
         {
             var newRoot = new Node { IsLeaf = false };
@@ -37,6 +40,7 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
         InsertNonFull(_root, key, value);
         Count++;
     }
+
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
     {
         Add(item.Key, item.Value);
@@ -82,17 +86,17 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
                 newChild.Children.Add(fullChild.Children[_t + j]);
         }
 
-        fullChild.Keys.RemoveRange(_t - 1, _t);
-        fullChild.Values.RemoveRange(_t - 1, _t);
-        if (!fullChild.IsLeaf)
-            fullChild.Children.RemoveRange(_t, _t);
-
+        // Move median key to parent
         parent.Keys.Insert(index, fullChild.Keys[_t - 1]);
         parent.Values.Insert(index, fullChild.Values[_t - 1]);
-        parent.Children.Insert(index + 1, newChild);
 
-        fullChild.Keys.RemoveAt(_t - 1);
-        fullChild.Values.RemoveAt(_t - 1);
+        // Shrink fullChild
+        fullChild.Keys.RemoveRange(_t - 1, fullChild.Keys.Count - (_t - 1));
+        fullChild.Values.RemoveRange(_t - 1, fullChild.Values.Count - (_t - 1));
+        if (!fullChild.IsLeaf)
+            fullChild.Children.RemoveRange(_t, fullChild.Children.Count - _t);
+
+        parent.Children.Insert(index + 1, newChild);
     }
 
     public bool ContainsKey(TKey key) => TryGetValue(key, out _);
@@ -169,9 +173,10 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
 
     public bool Remove(TKey key)
     {
-        if (!ContainsKey(key)) return false;
+        if (!TryGetValue(key, out _)) return false;
 
         Remove(_root, key);
+
         if (_root.Keys.Count == 0 && !_root.IsLeaf)
             _root = _root.Children[0];
 
@@ -182,17 +187,16 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
     public bool Remove(KeyValuePair<TKey, TValue> item)
     {
         if (Contains(item))
-        {
             return Remove(item.Key);
-        }
         return false;
     }
 
     private void Remove(Node node, TKey key)
     {
-        int idx = node.Keys.FindIndex(k => k.CompareTo(key) >= 0);
+        int idx = 0;
+        while (idx < node.Keys.Count && key.CompareTo(node.Keys[idx]) > 0) idx++;
 
-        if (idx >= 0 && idx < node.Keys.Count && node.Keys[idx].CompareTo(key) == 0)
+        if (idx < node.Keys.Count && key.CompareTo(node.Keys[idx]) == 0)
         {
             if (node.IsLeaf)
             {
@@ -224,7 +228,6 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
         }
         else if (!node.IsLeaf)
         {
-            if (idx < 0) idx = node.Keys.Count;
             if (node.Children[idx].Keys.Count < _t)
                 Fill(node, idx);
             Remove(node.Children[idx], key);
@@ -321,17 +324,13 @@ public class BTreeDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKe
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
-        if (TryGetValue(item.Key, out var val))
-            return EqualityComparer<TValue>.Default.Equals(val, item.Value);
-        return false;
+        return TryGetValue(item.Key, out var val) && EqualityComparer<TValue>.Default.Equals(val, item.Value);
     }
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
         foreach (var kvp in this)
-        {
             array[arrayIndex++] = kvp;
-        }
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()

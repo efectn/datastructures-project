@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace datastructures_project.Tests.Search
+namespace datastructures_project.HashTables
 {
     enum NodeColor { Red, Black }
 
@@ -21,7 +21,7 @@ namespace datastructures_project.Tests.Search
         }
     }
 
-    class RedBlackTree<TKey, TValue> : IDictionary<TKey, TValue> where TKey : IComparable<TKey>
+    public class RedBlackTree<TKey, TValue> : IDictionary<TKey, TValue> where TKey : IComparable<TKey>
     {
         private Node<TKey, TValue> root;
         private int count = 0;
@@ -38,7 +38,7 @@ namespace datastructures_project.Tests.Search
             {
                 var node = FindNode(root, key);
                 if (node != null) node.Value = value;
-                else Add(key, value);
+                else AddInternal(key, value);
             }
         }
 
@@ -48,6 +48,17 @@ namespace datastructures_project.Tests.Search
         public bool IsReadOnly => false;
 
         public void Add(TKey key, TValue value)
+        {
+            if (ContainsKey(key))
+                throw new ArgumentException("Key already exists.");
+
+            var newNode = new Node<TKey, TValue>(key, value);
+            root = BSTInsert(root, newNode);
+            FixViolation(newNode);
+            count++;
+        }
+        
+        private void AddInternal(TKey key, TValue value)
         {
             var newNode = new Node<TKey, TValue>(key, value);
             root = BSTInsert(root, newNode);

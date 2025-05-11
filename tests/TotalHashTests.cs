@@ -16,6 +16,8 @@ namespace datastructures_project.Tests
                 "Double" => new DoubleHashingHashTable<string, int>(),
                 "Separate" => new SeparateChainingHashTable<string, int>(),
                 "AVL" => new AVLTreeDictionary<string, int>(), // AVL Tree'yi ekledik
+                "BTree" => new BTreeDictionary<string, int>(),
+                "RedBlack" => new RedBlackTree<string, int>(),
                 _ => throw new ArgumentException("Invalid type")
             };
         }
@@ -26,6 +28,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Add_And_Retrieve_Works(string type)
         {
             var table = CreateTable(type);
@@ -42,6 +46,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Add_DuplicateKey_Throws(string type)
         {
             var table = CreateTable(type);
@@ -55,6 +61,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Indexer_Set_Works(string type)
         {
             var table = CreateTable(type);
@@ -68,6 +76,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Remove_Works(string type)
         {
             var table = CreateTable(type);
@@ -82,6 +92,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void TryGetValue_Returns_Expected_Results(string type)
         {
             var table = CreateTable(type);
@@ -98,6 +110,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Keys_And_Values_Work(string type)
         {
             var table = CreateTable(type);
@@ -114,6 +128,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Clear_Removes_All(string type)
         {
             var table = CreateTable(type);
@@ -130,6 +146,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Enumerator_Works(string type)
         {
             var table = CreateTable(type);
@@ -152,6 +170,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Remove_Does_Not_Break_Search_Chain(string type)
         {
             var table = CreateTable(type);
@@ -186,11 +206,13 @@ namespace datastructures_project.Tests
         }
         
         [Theory]
-        //[InlineData("Linear")]
-        //[InlineData("Quadratic")]
+        [InlineData("Linear")]
+        [InlineData("Quadratic")]
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Can_Handle_Many_Entries(string type)
         {
             var table = CreateTable(type);
@@ -210,6 +232,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Indexer_Updates_Existing_Key(string type)
         {
             var table = CreateTable(type);
@@ -225,6 +249,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Remove_NonExistent_Returns_False(string type)
         {
             var table = CreateTable(type);
@@ -237,6 +263,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void ContainsKey_Consistent(string type)
         {
             var table = CreateTable(type);
@@ -251,6 +279,8 @@ namespace datastructures_project.Tests
         [InlineData("Double")]
         [InlineData("Separate")]
         [InlineData("AVL")]
+        [InlineData("BTree")]
+        [InlineData("RedBlack")]
         public void Handles_Empty_And_Special_Keys(string type)
         {
             var table = CreateTable(type);
