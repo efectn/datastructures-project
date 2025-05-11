@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hash Tablosu Görsel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .hash-table {
+            width: fit-content;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            table-layout: fixed; 
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .index {
+            width: 30px;
+            font-weight: bold;
+            color: #007bff;
+            margin-right: 10px; 
+            text-align: right; 
+        }
+
+        .box {
+            width: 50px;
+            height: 40px;
+            border: 2px solid #333;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 6px;
+            font-size: 18px;
+            background-color: #e9ecef;
+            overflow: hidden; 
+            position: relative; 
+            cursor: pointer; 
+        }
+
+        .box.dolu {
+            background-color: #d4edda;
+            border-color: #155724;
+            color: #155724;
+        }
+
+        .box.bos {
+            background-color: #f8d7da;
+            border-color: #721c24;
+            color: #721c24;
+        }
+
+        .box.silinmis {
+            background-color: #e2e3e4;
+            border-color: #868e96;
+            color: #868e96;
+        }
+
+        .box.collision {
+            background-color: #fff3cd;
+            border-color: #856404;
+            color: #856404;
+        }
+
+        .arrow {
+            margin: 0 6px;
+            font-size: 26px;
+            color: #555;
+            transform: scaleX(1.8);
+        }
+
+        
+        .popup {
+            display: none;
+            position: absolute;
+            top: 100%; 
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            white-space: nowrap;
+            margin-top: 5px;
+        }
+
+        .popup.show {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Hash Tablosu</h1>
+    <div class="hash-table" id="hashTable"></div>
+
+    <script>
+        const hashTableData = {
+            0: [16],
+            1: [],
+            2: [],
+            3: [27, 19,26],
+            4: [11],
+            5: [],
+            6: [22, 6],
+            7: []
+        };
+
+        const container = document.getElementById('hashTable');
+        const tableSize = 8;
+
+        function calculateHash(key, size) {
+            return key % size;
+        }
+
+        for (let i = 0; i < tableSize; i++) {
+            const row = document.createElement('div');
+            row.className = 'row';
+
+            const index = document.createElement('div');
+            index.className = 'index';
+            index.textContent = i + ':';
+            row.appendChild(index);
+
+            if (hashTableData[i].length === 0) {
+                const emptyBox = document.createElement('div');
+                emptyBox.className = 'box bos';
+                emptyBox.textContent = '#';
+                row.appendChild(emptyBox);
+            } else {
+                hashTableData[i].forEach((val, idx) => {
+                    const box = document.createElement('div');
+                    box.className = 'box';
+                    const hash = calculateHash(val, tableSize);
+                    if (hash !== i) {
+                        box.classList.add('collision');
+                    }
+                    box.textContent = val;
+
+                    
+                    const popup = document.createElement('div');
+                    popup.className = 'popup';
+                    popup.textContent = `Key: ${val}, Hash: ${hash}`;
+                    box.appendChild(popup);
+
+                    box.addEventListener('click', () => {
+                        popup.classList.toggle('show');
+                    });
+
+                    row.appendChild(box);
+
+                    if (idx < hashTableData[i].length - 1) {
+                        const arrow = document.createElement('div');
+                        arrow.className = 'arrow';
+                        arrow.textContent = '➜';
+                        row.appendChild(arrow);
+                    }
+                });
+            }
+
+            container.appendChild(row);
+        }
+    </script>
+</body>
+</html>
