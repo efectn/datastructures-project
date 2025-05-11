@@ -5,6 +5,48 @@
         <input class="mdl-textfield__input" id="q" name="q" placeholder="Query'i girin" required type="text">
         <ul id="autocomplete-list" class="autocomplete-dropdown"></ul>
       </div>
+      <div class="hash-methods" style="margin: 20px 0; display: flex; justify-content: space-between;">
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="linearProbing">
+          <input type="checkbox" id="linearProbing" class="mdl-checkbox__input" name="methods[]" value="LinearProbing" checked>
+          <span class="mdl-checkbox__label">Linear Probing</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="quadraticProbing">
+          <input type="checkbox" id="quadraticProbing" class="mdl-checkbox__input" name="methods[]" value="QuadraticProbing" checked>
+          <span class="mdl-checkbox__label">Quadratic Probing</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="doubleHashing">
+          <input type="checkbox" id="doubleHashing" class="mdl-checkbox__input" name="methods[]" value="DoubleHashing" checked>
+          <span class="mdl-checkbox__label">Double Hashing</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="separateChaining">
+          <input type="checkbox" id="separateChaining" class="mdl-checkbox__input" name="methods[]" value="SeparateChaining" checked>
+          <span class="mdl-checkbox__label">Separate Chaining</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="dictionary">
+          <input type="checkbox" id="dictionary" class="mdl-checkbox__input" name="methods[]" value="Dictionary" checked>
+          <span class="mdl-checkbox__label">Dictionary</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sortedList">
+          <input type="checkbox" id="sortedList" class="mdl-checkbox__input" name="methods[]" value="SortedList">
+          <span class="mdl-checkbox__label">SortedList</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="sortedDictionary">
+          <input type="checkbox" id="sortedDictionary" class="mdl-checkbox__input" name="methods[]" value="SortedDictionary">
+          <span class="mdl-checkbox__label">SortedDictionary</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="avl">
+          <input type="checkbox" id="avl" class="mdl-checkbox__input" name="methods[]" value="AVL" checked>
+          <span class="mdl-checkbox__label">AVL Tree</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="btree">
+          <input type="checkbox" id="btree" class="mdl-checkbox__input" name="methods[]" value="BTree">
+          <span class="mdl-checkbox__label">BTree</span>
+        </label>
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="redBlack">
+          <input type="checkbox" id="redBlack" class="mdl-checkbox__input" name="methods[]" value="RedBlack" checked>
+          <span class="mdl-checkbox__label">Red Black Tree</span>
+        </label>
+      </div>
       <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored search-button" type="submit">
         Ara
       </button>

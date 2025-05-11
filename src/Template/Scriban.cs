@@ -39,7 +39,7 @@ public class ScribanTemplateService
         obj.Import(vars);
         
         var ctx = new TemplateContext();
-        ctx.LoopLimit = 2000;
+        ctx.LoopLimit = 10000;
         ctx.PushGlobal(obj);
         
         return template.Render(ctx);

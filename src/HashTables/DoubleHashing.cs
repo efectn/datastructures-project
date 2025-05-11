@@ -228,7 +228,7 @@ namespace datastructures_project.HashTables
                 }
                 else
                 {
-                    yield return new KeyValuePair<int, KeyValuePair<TKey, TValue>>(i, new KeyValuePair<TKey, TValue>(default!, default!));
+                    yield return new KeyValuePair<int, KeyValuePair<TKey, TValue>>(-1, new KeyValuePair<TKey, TValue>(default!, default!));
                 }
             }
         }

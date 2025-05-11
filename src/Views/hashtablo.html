@@ -22,7 +22,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            table-layout: fixed; 
+            table-layout: fixed;
         }
 
         .row {
@@ -35,13 +35,13 @@
             width: 30px;
             font-weight: bold;
             color: #007bff;
-            margin-right: 10px; 
-            text-align: right; 
+            margin-right: 10px;
+            text-align: right;
         }
 
         .box {
-            width: 50px;
-            height: 40px;
+            width: 55px;
+            height: 45px;
             border: 2px solid #333;
             border-radius: 6px;
             display: flex;
@@ -50,9 +50,9 @@
             margin: 0 6px;
             font-size: 18px;
             background-color: #e9ecef;
-            overflow: hidden; 
-            position: relative; 
-            cursor: pointer; 
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
         }
 
         .box.dolu {
@@ -61,16 +61,10 @@
             color: #155724;
         }
 
-        .box.bos {
+        .box.silinmis {
             background-color: #f8d7da;
             border-color: #721c24;
             color: #721c24;
-        }
-
-        .box.silinmis {
-            background-color: #e2e3e4;
-            border-color: #868e96;
-            color: #868e96;
         }
 
         .box.collision {
@@ -86,11 +80,10 @@
             transform: scaleX(1.8);
         }
 
-        
+
         .popup {
-            display: none;
             position: absolute;
-            top: 100%; 
+            top: 100%;
             left: 50%;
             transform: translateX(-50%);
             background-color: #fff;
@@ -111,75 +104,38 @@
 </head>
 <body>
 
-    <h1>Hash Tablosu</h1>
-    <div class="hash-table" id="hashTable"></div>
+<h1>Hash Tablosu İçeriği</h1>
+<div class="hash-table" id="hashTable">
+    {{ for item in Items }}
+    <div class="row">
+        <div class="index">{{ item.index }}:</div>
+        <div class="box {{ !item.bos ? 'dolu' : '' }} {{ item.tombstone ? 'silinmis' : '' }} {{ item.collide ? 'collision' : '' }}">
+            {{ item.tombstone || item.bos ? '#' : item.key }}
+            <div class="popup">Key: 16, Hash: 0</div>
+        </div>
+    </div>
+    {{ end }}
+    {{ for item in ItemsSep }}
+    <div class="row">
+        <div class="index">{{ for.index }}:</div>
+        {{ for i in item }}
+            <div class="box dolu">{{ i.key }}
+                <div class="popup show">Key: 27, Hash: 3</div>
+            </div>
+            {{ if !for.last }}
+            <div class="arrow">➜</div>
+            {{ end }}
+        {{ end }}
 
-    <script>
-        const hashTableData = {
-            0: [16],
-            1: [],
-            2: [],
-            3: [27, 19,26],
-            4: [11],
-            5: [],
-            6: [22, 6],
-            7: []
-        };
+        {{ if !item }}
+            <div class="box">#
+                <div class="popup show">Key: 27, Hash: 3</div>
+            </div>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
 
-        const container = document.getElementById('hashTable');
-        const tableSize = 8;
 
-        function calculateHash(key, size) {
-            return key % size;
-        }
-
-        for (let i = 0; i < tableSize; i++) {
-            const row = document.createElement('div');
-            row.className = 'row';
-
-            const index = document.createElement('div');
-            index.className = 'index';
-            index.textContent = i + ':';
-            row.appendChild(index);
-
-            if (hashTableData[i].length === 0) {
-                const emptyBox = document.createElement('div');
-                emptyBox.className = 'box bos';
-                emptyBox.textContent = '#';
-                row.appendChild(emptyBox);
-            } else {
-                hashTableData[i].forEach((val, idx) => {
-                    const box = document.createElement('div');
-                    box.className = 'box';
-                    const hash = calculateHash(val, tableSize);
-                    if (hash !== i) {
-                        box.classList.add('collision');
-                    }
-                    box.textContent = val;
-
-                    
-                    const popup = document.createElement('div');
-                    popup.className = 'popup';
-                    popup.textContent = `Key: ${val}, Hash: ${hash}`;
-                    box.appendChild(popup);
-
-                    box.addEventListener('click', () => {
-                        popup.classList.toggle('show');
-                    });
-
-                    row.appendChild(box);
-
-                    if (idx < hashTableData[i].length - 1) {
-                        const arrow = document.createElement('div');
-                        arrow.className = 'arrow';
-                        arrow.textContent = '➜';
-                        row.appendChild(arrow);
-                    }
-                });
-            }
-
-            container.appendChild(row);
-        }
-    </script>
 </body>
 </html>
