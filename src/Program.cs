@@ -16,7 +16,7 @@ using OpenTelemetry.Resources;
 var builder = WebApplication.CreateBuilder(args);
 
 var tokenizer = new Tokenizer(builder.Configuration);
-var trie = new Trie();
+var trie = new Trie(builder.Configuration);
 
 // Initialize the index
 IIndex[] indexes = new IIndex[10];

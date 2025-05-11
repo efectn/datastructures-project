@@ -16,10 +16,17 @@ public class Node
 public class Trie : ITrie
 {
     private readonly Node _head;
+    private int _levenshteinDistance = 2;
 
     public Trie()
     {
         _head = new Node();
+    }
+    
+    public Trie(IConfiguration configuration)
+    {
+        _head = new Node();
+        _levenshteinDistance = int.Parse(configuration["Search:LevenshteinDistance"]);
     }
 
     public void AddWord(string word)
@@ -141,7 +148,7 @@ public class Trie : ITrie
             }
             else
             {
-                newTokens.AddRange(LevenshteinSearch(token, 2)); // TODO: let maxdistance be configurable from the config.
+                newTokens.AddRange(LevenshteinSearch(token, _levenshteinDistance));
             }
         }
 
