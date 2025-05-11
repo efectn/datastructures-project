@@ -89,6 +89,8 @@ public class SearchHandler
             return Results.BadRequest("q property is required!"); // TODO: error message instead
         }
         
+        var methods = ctx.Request.Query["methods[]"];
+
         // Log the request
         logger.LogInformation("Search request received for \"{query}\" query on {timestamp} at {path}",
             query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
@@ -108,12 +110,30 @@ public class SearchHandler
         
         foreach (var score in scores)
         {
+            if (methods.Count > 0 && !methods.Contains(score.Tag))
+            {
+                continue;
+            }
+            
             var timeBefore = DateTime.Now;
             results[score.Tag] = _searchHandler(score, tokenizer, documentService, query) ?? [];
             elapsedTimes[score.Tag] = (DateTime.Now - timeBefore).TotalMilliseconds;
         }
+        
+        // Remove 0.0 results from elapsedTimes
+        foreach (var key in elapsedTimes.Keys.ToList())
+        {
+            if (elapsedTimes[key] == 0.0)
+            {
+                elapsedTimes.Remove(key);
+            }
+        }
 
-        var showResultsOf = config["Search:ShowResultsOf"] ?? "Dictionary";
+        var showResultsOf = config["Search:ShowResultsOf"] ?? elapsedTimes.Keys.First();
+        if (!results.ContainsKey(showResultsOf))
+        {
+            showResultsOf = elapsedTimes.Keys.First();
+        }
         
         return Results.Content(scribanService.RenderWithLayout("Results", new Dictionary<string, object>
         {

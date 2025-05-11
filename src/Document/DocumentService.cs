@@ -17,6 +17,7 @@ public class DocumentService : IDocumentService
         _tokenizer = tokenizer;
         
         // Add previous documents to index
+        Console.WriteLine("Önceki dokümanlar veri yapılarına ekleniyor...");
         var documents = documentRepository.GetAllDocuments();
         foreach (var document in documents)
         {
@@ -26,6 +27,7 @@ public class DocumentService : IDocumentService
                 i.Add(document.Id, tokens.ToArray());
             }
         }
+        Console.WriteLine("Önceki dokümanlar veri yapılarına eklendi.");
     }
 
     public void AddDocument(string title, string url, string description)
