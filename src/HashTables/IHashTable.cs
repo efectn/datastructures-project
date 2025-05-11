@@ -9,5 +9,6 @@ public interface ILinearQuadraticDoubleHashing<TKey, TValue> : IDictionary<TKey,
 
 public interface ISeparateChaining<TKey, TValue> : IDictionary<TKey, TValue>
 {
-    LinkedList<KeyValuePair<TKey, TValue>>[] GetBuckets();
+    CustomLinkedList<KeyValuePair<TKey, TValue>>[] GetBuckets();
+
 }
