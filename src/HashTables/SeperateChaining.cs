@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace datastructures_project.HashTables
 {
-    public class SeparateChainingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
+    public class SeparateChainingHashTable<TKey, TValue> : ISeparateChaining<TKey, TValue>
     {
         private LinkedList<KeyValuePair<TKey, TValue>>[] _buckets;
         private int _count;
@@ -225,6 +225,11 @@ namespace datastructures_project.HashTables
                     }
                 }
             }
+        }
+        
+        public LinkedList<KeyValuePair<TKey, TValue>>[]  GetBuckets()
+        {
+            return (LinkedList<KeyValuePair<TKey, TValue>>[])_buckets.Clone();
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item) => Contains(item) && Remove(item.Key);

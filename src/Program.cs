@@ -25,15 +25,16 @@ switch (builder.Configuration["Search:Index"])
     case "inverted":
         var invertedIndexDictionaries = new Dictionary<string, IDictionary<string, HashSet<(int, int)>>>
         {
-            { "Dictionary", new Dictionary<string, HashSet<(int, int)>>(300) },
-            { "SortedList", new SortedList<string, HashSet<(int, int)>>(300) },
+            { "Dictionary", new Dictionary<string, HashSet<(int, int)>>() },
+            { "SortedList", new SortedList<string, HashSet<(int, int)>>() },
             { "SortedDictionary", new SortedDictionary<string, HashSet<(int, int)>>() },
-            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>(3) },
-            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>(30000) },
-            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>(30000) },
-            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>(3) },
+            { "DoubleHashing", new DoubleHashingHashTable<string, HashSet<(int, int)>>() },
+            { "LinearProbing", new LinearProbingHashTable<string, HashSet<(int, int)>>() },
+            { "QuadraticProbing", new QuadraticProbingHashTable<string, HashSet<(int, int)>>() },
+            { "SeparateChaining", new SeparateChainingHashTable<string, HashSet<(int, int)>>() },
             { "AVL", new AVLTreeDictionary<string, HashSet<(int, int)>>() }
         };
+        builder.Services.AddSingleton(invertedIndexDictionaries);
 
         var i = 0;
         foreach (var dict in invertedIndexDictionaries)
@@ -46,15 +47,16 @@ switch (builder.Configuration["Search:Index"])
     case "forward":
         var forwardIndexDictionaries = new Dictionary<string, IDictionary<int, HashSet<(string, int)>>>
         {
-            { "Dictionary", new Dictionary<int, HashSet<(string, int)>>(300) },
-            { "SortedList", new SortedList<int, HashSet<(string, int)>>(300) },
+            { "Dictionary", new Dictionary<int, HashSet<(string, int)>>() },
+            { "SortedList", new SortedList<int, HashSet<(string, int)>>() },
             { "SortedDictionary", new SortedDictionary<int, HashSet<(string, int)>>() },
-            { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>(3) },
-            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>(30000) },
-            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>(30000) },
-            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>(3) },
+            { "DoubleHashing", new DoubleHashingHashTable<int, HashSet<(string, int)>>() },
+            { "LinearProbing", new LinearProbingHashTable<int, HashSet<(string, int)>>() },
+            { "QuadraticProbing", new QuadraticProbingHashTable<int, HashSet<(string, int)>>() },
+            { "SeparateChaining", new SeparateChainingHashTable<int, HashSet<(string, int)>>() },
             { "AVL", new AVLTreeDictionary<int, HashSet<(string, int)>>() }
         };
+        builder.Services.AddSingleton(forwardIndexDictionaries);
         
         i = 0;
         foreach (var dict in forwardIndexDictionaries)
@@ -150,6 +152,7 @@ SearchHandler.RegisterHandlers(app);
 // Register document handlers
 DocumentHandler.RegisterHandlers(app);
 
-//HashTableHandler.RegisterHandlers(app);
+// Register hash table handlers
+HashTableHandler.RegisterHandlers(app);
 
 app.Run();

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace datastructures_project.HashTables
 {
-    public class DoubleHashingHashTable<TKey, TValue> : IDictionary<TKey, TValue>
+    public class DoubleHashingHashTable<TKey, TValue> : ILinearQuadraticDoubleHashing<TKey, TValue>
     {
         private struct Entry
         {
@@ -216,6 +216,21 @@ namespace datastructures_project.HashTables
                 }
             }
             return tombstones;
+        }
+        
+        public IEnumerator<KeyValuePair<int, KeyValuePair<TKey, TValue>>> GetEnumeratorWithIndex()
+        {
+            for (int i = 0; i < _size; i++)
+            {
+                if (_entries[i].HasValue)
+                {
+                    yield return new KeyValuePair<int, KeyValuePair<TKey, TValue>>(i, new KeyValuePair<TKey, TValue>(_entries[i]!.Value.Key, _entries[i]!.Value.Value));
+                }
+                else
+                {
+                    yield return new KeyValuePair<int, KeyValuePair<TKey, TValue>>(i, new KeyValuePair<TKey, TValue>(default!, default!));
+                }
+            }
         }
 
         public TValue this[TKey key]
