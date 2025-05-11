@@ -7,7 +7,7 @@ namespace datastructures_project.HashTables
 {
     public class SeparateChainingHashTable<TKey, TValue> : ISeparateChaining<TKey, TValue>
     {
-        private LinkedList<KeyValuePair<TKey, TValue>>[] _buckets;
+        private CustomLinkedList<KeyValuePair<TKey, TValue>>[] _buckets;
         private int _count;
         private int _size;
         private readonly IEqualityComparer<TKey> _comparer;
@@ -16,7 +16,7 @@ namespace datastructures_project.HashTables
         public SeparateChainingHashTable(int capacity = 16, IEqualityComparer<TKey> comparer = null)
         {
             _size = GetNextPrime(capacity);
-            _buckets = new LinkedList<KeyValuePair<TKey, TValue>>[_size];
+            _buckets = new CustomLinkedList<KeyValuePair<TKey, TValue>>[_size];
             _comparer = comparer ?? EqualityComparer<TKey>.Default;
         }
 
@@ -28,8 +28,7 @@ namespace datastructures_project.HashTables
             {
                 if (prime >= min) return prime;
             }
-            
-            // Fallback for very large sizes
+
             for (int i = min | 1; i < int.MaxValue; i += 2)
             {
                 if (IsPrime(i)) return i;
@@ -41,7 +40,7 @@ namespace datastructures_project.HashTables
         {
             if (number < 2) return false;
             if (number % 2 == 0) return number == 2;
-            
+
             int boundary = (int)Math.Sqrt(number);
             for (int i = 3; i <= boundary; i += 2)
             {
@@ -62,7 +61,7 @@ namespace datastructures_project.HashTables
         {
             int newSize = GetNextPrime(_size * 2);
             var oldBuckets = _buckets;
-            _buckets = new LinkedList<KeyValuePair<TKey, TValue>>[newSize];
+            _buckets = new CustomLinkedList<KeyValuePair<TKey, TValue>>[newSize];
             _size = newSize;
             _count = 0;
 
@@ -94,7 +93,7 @@ namespace datastructures_project.HashTables
             int index = GetHash(key);
             if (_buckets[index] == null)
             {
-                _buckets[index] = new LinkedList<KeyValuePair<TKey, TValue>>();
+                _buckets[index] = new CustomLinkedList<KeyValuePair<TKey, TValue>>();
             }
 
             _buckets[index].AddLast(new KeyValuePair<TKey, TValue>(key, value));
@@ -107,15 +106,18 @@ namespace datastructures_project.HashTables
                 throw new ArgumentNullException(nameof(key));
 
             int index = GetHash(key);
-            if (_buckets[index] != null)
+            var bucket = _buckets[index];
+            if (bucket != null)
             {
-                foreach (var item in _buckets[index])
+                var node = bucket.head;
+                while (node != null)
                 {
-                    if (_comparer.Equals(item.Key, key))
+                    if (_comparer.Equals(node.value.Key, key))
                     {
-                        value = item.Value;
+                        value = node.value.Value;
                         return true;
                     }
+                    node = node.next;
                 }
             }
 
@@ -131,18 +133,19 @@ namespace datastructures_project.HashTables
                 throw new ArgumentNullException(nameof(key));
 
             int index = GetHash(key);
-            if (_buckets[index] != null)
+            var bucket = _buckets[index];
+            if (bucket != null)
             {
-                var node = _buckets[index].First;
+                var node = bucket.head;
                 while (node != null)
                 {
-                    if (_comparer.Equals(node.Value.Key, key))
+                    if (_comparer.Equals(node.value.Key, key))
                     {
-                        _buckets[index].Remove(node);
+                        bucket.Remove(node);
                         _count--;
                         return true;
                     }
-                    node = node.Next;
+                    node = node.next;
                 }
             }
 
@@ -163,18 +166,20 @@ namespace datastructures_project.HashTables
                     throw new ArgumentNullException(nameof(key));
 
                 int index = GetHash(key);
-                if (_buckets[index] != null)
+                var bucket = _buckets[index];
+
+                if (bucket != null)
                 {
-                    var node = _buckets[index].First;
+                    var node = bucket.head;
                     while (node != null)
                     {
-                        if (_comparer.Equals(node.Value.Key, key))
+                        if (_comparer.Equals(node.value.Key, key))
                         {
-                            _buckets[index].Remove(node);
-                            _buckets[index].AddLast(new KeyValuePair<TKey, TValue>(key, value));
+                            bucket.Remove(node);
+                            bucket.AddLast(new KeyValuePair<TKey, TValue>(key, value));
                             return;
                         }
-                        node = node.Next;
+                        node = node.next;
                     }
                 }
 
@@ -182,28 +187,28 @@ namespace datastructures_project.HashTables
             }
         }
 
-        public ICollection<TKey> Keys => 
+        public ICollection<TKey> Keys =>
             _buckets.Where(b => b != null)
-                   .SelectMany(b => b.Select(i => i.Key))
-                   .ToList();
+                    .SelectMany(b => b.Select(i => i.Key))
+                    .ToList();
 
-        public ICollection<TValue> Values => 
+        public ICollection<TValue> Values =>
             _buckets.Where(b => b != null)
-                   .SelectMany(b => b.Select(i => i.Value))
-                   .ToList();
+                    .SelectMany(b => b.Select(i => i.Value))
+                    .ToList();
 
         public int Count => _count;
         public bool IsReadOnly => false;
 
         public void Clear()
         {
-            _buckets = new LinkedList<KeyValuePair<TKey, TValue>>[_size];
+            _buckets = new CustomLinkedList<KeyValuePair<TKey, TValue>>[_size];
             _count = 0;
         }
 
         public void Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
 
-        public bool Contains(KeyValuePair<TKey, TValue> item) => 
+        public bool Contains(KeyValuePair<TKey, TValue> item) =>
             TryGetValue(item.Key, out TValue value) && EqualityComparer<TValue>.Default.Equals(value, item.Value);
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
@@ -226,10 +231,10 @@ namespace datastructures_project.HashTables
                 }
             }
         }
-        
-        public LinkedList<KeyValuePair<TKey, TValue>>[]  GetBuckets()
+
+        public CustomLinkedList<KeyValuePair<TKey, TValue>>[] GetBuckets()
         {
-            return (LinkedList<KeyValuePair<TKey, TValue>>[])_buckets.Clone();
+            return (CustomLinkedList<KeyValuePair<TKey, TValue>>[])_buckets.Clone();
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item) => Contains(item) && Remove(item.Key);
