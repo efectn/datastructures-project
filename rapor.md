@@ -10,7 +10,7 @@ Ek olarak, sisteme eklenen auto-completion, wildcard arama, levenshtein distance
 
 - **.NET 9.0:** C# framework'ü ile geliştirilmiştir.
 - **ASP.NET Core:** Backend tarafının geliştirilmesinde kullanılmıştır.
-- **SQLite:** Çalışmak için ayrı bir daemona ihtiyaç duymadığından PostgreSQL, MariaDB gibi veri tabanlarının yerine kullanılmıştır.
+- **SQLite:** Çalışmak için ayrı bir daemona ihtiyaç duymadığından PostgreSQL, MariaDB gibi veri tabanlarının yerine kullanılmıştır. Projede dökümanların veritabanında tutulması amacıyla kullanılmıştır.
 - **Entity Framework Core:** SQLite ile veri tabanı işlemlerini gerçekleştirmek için varsayılan ORM olarak kullanılmıştır.
 - **Scriban:** Projede varsayılan template motoru olarak kullanılmıştır.
 - **xUnit:** Projedeki veri yapıları ve algoritmaların test edilmesi için kullanılmıştır. Yazılan unit testler sayesinde projenin her aşamasında ekstra bir kontrole ihtiyaç kalmadan kodun doğru çalıştığı garanti edilmiştir.
@@ -35,13 +35,39 @@ Ek olarak, sisteme eklenen auto-completion, wildcard arama, levenshtein distance
 2. Projenin kök dizininde `dotnet run` komutu ile çalıştırılabilir.
 3. Proje çalıştırıldığında terminalde gözüken port ile projeye tarayıcı üzerinden erişilebilir.
 
-**Not:** Eğer benchmarklar çalıştırılmak isteniyorsa `tests/` dizinine gidip `dotnet restore` komutu ile bağımlılıklar yüklenmelidir. Daha sonra `dotnet run --configuration Release` komutu ile benchmarklar çalıştırılabilir. Benchmarkların çalışması uzun sürdüğü için `Program.cs`'deki `Main` metodunda `BenchmarkRunner.Run<AllBenchmarks>();` satırı yorum satırına alınmalıdır. Bu sayede sadece istenen benchmarklar çalıştırılabilir.
+**Not:** Eğer benchmarklar çalıştırılmak isteniyorsa `tests/` dizinine gidip `dotnet restore` komutu ile bağımlılıklar yüklenmelidir. Daha sonra `dotnet run --configuration Release` komutu ile benchmarklar çalıştırılabilir. Benchmarkların çalışması uzun sürdüğü için `Program.cs`'deki `Main` metodunda `BenchmarkRunner.Run<XBenchmarks>();` satırları yorum satırına alınmalıdır. Bu sayede sadece istenen benchmarklar çalıştırılabilir.
 
 **Not:** Unit-testler çalıştırılmak isteniyorsa `tests/` dizinine gidip `dotnet restore` komutu ile bağımlılıklar yüklenmelidir. Daha sonra `dotnet test` komutu ile mevcut unit-testler çalıştırılabilir.
 
 ## Web Arayüzü ve Açıklamalar
 
-**EKLENECEK**
+Projemizin frontend kısmına 4 adet sayfa ekledik: index, results, documents, hashtables
+
+### Index Sayfası
+
+Index sayfasında arama yapılacak metin girilir ve alttaki checkboxlar yardımıyla arama yapılacak veri yapıları seçildikten sonra arama butonuna basılarak arama yapılabilir. Ayrıca auto-completion ile arama yapılacak kelimenin tamamı yazılmadan öneriler gösterilir. Bu özellik sayesinde kullanıcı arama yaparken daha hızlı ve doğru sonuçlar alabilir.
+
+Ek olarak alttaki **Döküman** butonuna tıklanarak Dökümanlar sayfasına gidilip dökümanlar düzenlenebilir.
+
+### Results Sayfası
+
+Results sayfasında arama sonuçları gösterilir. Arama sonuçları, arama yapılan kelimenin döküman içinde geçme sıklığına göre sıralanır. Ayrıca arama sonuçlarının yanında  arama skoru, dökümanların ID'leri, dökümanların içeriği de gösterilir. Bu sayede kullanıcı arama sonuçlarını daha iyi anlayabilir. Ayrıca, sayfanın sağ üstündeki **Arama Süreleri** kutucuğundan veri yapılarına göre arama işleminin kaç milisaniye sürdüğü görülebilir.
+
+Bu sayfada arama sonuçlarını göstermesi istenilen veri yapısı `appsettings.json`'dan ShowResultsOf değişkeni ile belirlenebilir.
+
+### Documents Sayfası
+
+Documents sayfasında index'e yeni döküman eklenebilir, mevcut dökümanlar listelenebilir ve silinebilir. Bu sayede kullanıcı dökümanları kolayca yönetebilir. Ayrıca dökümanların açıklaması ve URL'si de gösterilir. Bu sayede kullanıcı dökümanların içeriğini daha iyi anlayabilir.
+
+### Hashtables Sayfası
+
+Hashtables sayfasında index'e eklenen dökümanların hash tablosu yapısı gösterilir. Bu sayede kullanıcı hash tablosunun nasıl çalıştığını, collisionların nasıl işlendiğini görsel bir şekilde görebilir. Bu sayfada gri kutucuklar hashtable'daki boş alanları, yeşil kutucuklar dolu alanları, sarı kutucuklar ise collision olan alanları gösterirken kırmızı kutucuklar silinmiş olan alanları gösterir. Bu sayede kullanıcı hash tablosunun nasıl çalıştığını daha iyi anlayabilir.
+
+![Separate Chaining](./images/separate-chaining.png)
+
+![Quadratic Probing](./images/quadratic-probing.png)
+
+**Not:** HashTables'da collisionların daha etkin bir şekilde görülmesi için `appsettings.json`'dan Search:Index ayarının `inverted` yapılması gerekmektedir.
 
 ## Arama Mekanizması
 
@@ -381,9 +407,17 @@ Referans olması açısından Trie veri yapısı için oluşturulmuş benchmark 
 
 ### Levenshtein Distance
 
-**EKLENECEK**
+Arama motorlarında bir token aranırken sıkça yazım hataları olabilmektedir ve bu hataların düzeltilmesi doğru arama sonuçlarını elde edebilmek için önemlidir. Bu nedenle kelime yakınlık algoritmaları kullanılarak kullanıcının girmiş olduğu token'a benzer tokenların da arama sırasında değerlendirilmesi gerekmektedir. Örneğin `bilgisayr` token'ı arandığında `bilgisayar` token'ının da bulunması gerekmektedir. Biz de bu amaçla Levenshtein Distance algoritmasını kullanmaya karar verdik. Levenshtein Distance algoritması, iki kelime arasındaki edit distance'ı hesaplayarak kelimelerin benzerliğini belirler. Edit distance, iki kelime arasındaki minimum edit işlemi sayısını ifade eder. Edit işlemleri ise ekleme, silme ve değiştirme işlemlerinden biri olabilir.
 
-...
+Recursive ve matris yöntemi ile oluşturulmuş iki farklı algoritma ile Levenshtein Distance hesaplanabilmektedir. Recursive algoritma, iki kelime arasındaki edit distance'ı hesaplamak için recursive olarak çağrılır. Matris yöntemi ise iki kelime arasındaki edit distance'ı hesaplamak için bir matris oluşturur ve bu matrisi kullanarak edit distance'ı hesaplar. Matris yöntemi, recursive algoritmaya göre daha hızlı çalışmaktadır.
+
+Recursive yaklaşım ile oluşturulan Levenshtein algoritmasının zaman karmaşıklığı **O(3^(m+n))** iken, matris yöntemi ile oluşturulan Levenshtein algoritmasının zaman karmaşıklığı **O(n*m)** şeklindedir. Bu nedenle matris yöntemi daha hızlı çalışmaktadır. Ancak, matris yöntemi daha fazla bellek kullanmaktadır. Biz de bu trade-off'u göz önünde bulundurarak projemizdeki Levenshtein algoritmasını matris yöntemi ile oluşturmaya karar verdik. Bu sayede daha hızlı arama sonuçları elde edebildik.
+
+![Matris Yöntemi ile Levenshtein Distance Hesaplaması](./images/levenshtein.png)
+
+**Not:** Projede levenshtein algoritması ile arama yapılırken Trie veri yapısından  da yararlanılmıştır.
+
+**Not:** Levenshtein algoritmasının distance parametresi `appsettings.json` içinden değiştirilip etkisi görülebilir. Yüksek distance parametresi performansı kötü etkilediğinden 3'ün üstüne çıkarılmaması tavsiye edilir.
 
 ## Indekslenen Verinin Tutulması için Kullanılan Veri Yapıları
 
