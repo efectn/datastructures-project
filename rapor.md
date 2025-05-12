@@ -561,4 +561,106 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 
 ## Proje için En İdeal IDictionary Yapısı
 
-**EKLENECEK**
+Yukarıdaki benchmark sonuçlarına bakılarak en ideal IDictionary yapısı seçilebilir.
+
+- **Eleman Ekleme:** Dictionary, LinearProbing ve QuadraticProbing veri yapılarının benchmark sonuçlarına bakacak olursak en hızlı eleman ekleme işlemi Dictionary'de yapılmaktadır. Ancak, LinearProbing ve QuadraticProbing veri yapıları daha az bellek kullanmaktadır. Bu nedenle, eğer veri ekleme işleminin yoğun olduğu bir uygulama varsa bu veri yapılarını kullanmak daha mantıklıdır.
+- **Eleman Arama:** Eleman arama işlemi için de Dictionary, AVL Tree, Separate Chaining Hash table veri yapıları en hızlı sonuçları vermektedir. Ayrıca AVL Tree sıralı veriler arasından aramada oldukça performanslı olduğu için indexleme veri yapısı olarak `Forward Index` kullanılacaksa AVL ilk tercihlerden biri olmalıdır.
+- **Eleman Silme:** Eleman silme işlemi için de Dictionary, Linear Probing ve Quadratic Probing veri yapıları en hızlı sonuçları vermektedir. Ancak, AVL Tree ve Separate Chaining Hash table veri yapıları daha az bellek kullanmaktadır. Bu nedenle, eğer veri silme işleminin yoğun olduğu bir uygulama varsa bu veri yapılarını kullanmak daha mantıklıdır.
+
+### Inverted Index için Arama Sonuç Karşılaştırması
+
+- **"dünya tarihindeki önemli olaylar"** query'si için (76 sonuç):
+
+| **Veri Yapısı**  | **Arama Süresi (ms)** |
+|------------------|-----------------------|
+| Dictionary       | 31.0497               |
+| SortedDictionary | 30.9794               |
+| SortedList       | 29.2782               |
+| AVL              | 40.1899               |
+| BTree            | 43.895                |
+| RedBlack         | 185.167               |
+| DoubleHashing    | 52.1998               |
+| LinearProbing    | 51.6953               |
+| QuadraticProbing | 50.9707               |
+| SeparateChaining | 64.2091               |
+
+- **"ma* *lik* günd* siya*"** query'si için (177 sonuç):
+
+| **Veri Yapısı**  | **Arama Süresi (ms)** |
+|------------------|-----------------------|
+| Dictionary       | 50.8507               |
+| SortedDictionary | 52.3605               |
+| SortedList       | 50.7954               |
+| AVL              | 77.1855               |
+| BTree            | 85.1715               |
+| RedBlack         | 418.0776              |
+| DoubleHashing    | 102.7279              |
+| LinearProbing    | 103.5811              |
+| QuadraticProbing | 93.4012               |
+| SeparateChaining | 138.4742              |
+
+- **"*"** query'si için (1289 sonuç):
+
+| **Veri Yapısı**  | **Arama Süresi (ms)** |
+|------------------|-----------------------|
+| Dictionary       | 1756.377              |
+| SortedDictionary | 1812.2824             |
+| SortedList       | 1760.5035             |
+| AVL              | 2753.5104             |
+| BTree            | 3031.0451             |
+| RedBlack         | 15337.5511            |
+| DoubleHashing    | 3646.1078             |
+| LinearProbing    | 3667.9882             |
+| QuadraticProbing | 3409.1793             |
+| SeparateChaining | 4936.7895             |
+
+**Sonuç =>** Inverted Index için yapılan arama sonuçlarına göre C#'ın kendi standart veri yapıları dışında en yüksek performans verenlerin AVL, BTree ağaçları ve Quadratic Probing Hash table olduğu görülmüştür.
+
+### Forward Index için Arama Sonuç Karşılaştırması
+
+- **"dünya tarihindeki önemli olaylar"** query'si için (76 sonuç):
+
+| **Veri Yapısı**  | **Arama Süresi (ms)** |
+|------------------|-----------------------|
+| Dictionary       | 14.4647               |
+| SortedDictionary | 15.2529               |
+| SortedList       | 13.7886               |
+| AVL              | 11.9566               |
+| BTree            | 12.5305               |
+| RedBlack         | 20.1193               |
+| DoubleHashing    | 13.6318               |
+| LinearProbing    | 15.1138               |
+| QuadraticProbing | 13.9236               |
+| SeparateChaining | 13.6032               |
+
+- **"ma* *lik* günd* siya*"** query'si için (177 sonuç):
+
+| **Veri Yapısı**  | **Arama Süresi (ms)** |
+|------------------|-----------------------|
+| Dictionary       | 37.7591               |
+| SortedDictionary | 15.2529               |
+| SortedList       | 41.9966               |
+| AVL              | 47.4929               |
+| BTree            | 50.8816               |
+| RedBlack         | 157.2482              |
+| DoubleHashing    | 48.3932               |
+| LinearProbing    | 51.0458               |
+| QuadraticProbing | 53.68                 |
+| SeparateChaining | 65.5085               |
+
+- **"*"** query'si için (1289 sonuç):
+
+| **Veri Yapısı**  | **Arama Süresi (ms)** |
+|------------------|-----------------------|
+| Dictionary       | 1188.4944             |
+| SortedDictionary | 1238.1173             |
+| SortedList       | 1150.1819             |
+| AVL              | 1511.7356             |
+| BTree            | 1689.3744             |
+| RedBlack         | 5259.3687             |
+| DoubleHashing    | 1606.2968             |
+| LinearProbing    | 1673.9068             |
+| QuadraticProbing | 1727.2871             |
+| SeparateChaining | 2133.1215             |
+
+**Sonuç =>** Forward Index için yapılan arama sonuçlarına göre C#'ın kendi standart veri yapıları dışında en yüksek performans verenlerin Inverted Index'te olduğu gibi AVL, BTree ağaçları ve Quadratic Probing Hash table olduğu görülmüştür.
