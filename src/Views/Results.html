@@ -25,6 +25,10 @@
             <p class="no-results">{{ Info }}</p>
         {{ end }}
 
+        {{ if ProcessedTokens }}
+            <p class="no-results">Aranan Tokenler: {{ ProcessedTokens }}</p>
+        {{ end }}
+
         {{ for result in Results }}
             <div class="result-item">
                 <a href="{{result.url}}" style="text-decoration: none;"  target="_blank"><h3 class="result-title">{{ result.title }}</h3></a>

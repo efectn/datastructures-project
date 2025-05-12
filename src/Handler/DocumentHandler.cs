@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using System.Text.RegularExpressions;
 using datastructures_project.Document;
 using datastructures_project.Template;
 
@@ -77,6 +78,11 @@ public class DocumentHandler
         var title = ctx.Request.Form["title"];
         var url = ctx.Request.Form["url"];
         var description = ctx.Request.Form["description"];
+        
+        // Escape HTML characters
+        title = Regex.Replace(title, "<.*?>", string.Empty);
+        url = System.Net.WebUtility.HtmlEncode(url);
+        description = System.Net.WebUtility.HtmlEncode(description);
 
         // Log the request
         logger.LogInformation("Documents create request received for \"{title}\" query on {timestamp}", title, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));

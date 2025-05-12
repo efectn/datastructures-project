@@ -222,7 +222,7 @@ $$
 TF değeri düz olarak o dökümandaki istenen token sayısının o dökümandaki toplam token sayısına bölümü ile hresaplanacağı gibi logirtmik normalization işlemi yapılarak daha doğru sonuçlar elde edilebilir. Bu amaçla projede kullanılan `k=0.5` normalization değerine sahip TF fonksiyonu şekildeki gibidir:
 
 $$
-\text{tf}_{\text{double\_norm\_0.5}} = 0.5 + 0.5 \cdot \frac{f_{t,d}}{f_{\max}}
+TF(t,d) = 0.5 + 0.5 \cdot \frac{f_{t,}}{f_{\max}}
 $$
 
 - **f(t,d):** Kelimenin döküman içinde geçme sıklığı

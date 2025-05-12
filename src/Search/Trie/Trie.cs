@@ -138,7 +138,6 @@ public class Trie : ITrie
     public List<string> GetTokens(List<string> tokens)
     {
         var newTokens = new List<string>();
-
         foreach (var token in tokens)
         {
             // Check wildcard, then levenshtein

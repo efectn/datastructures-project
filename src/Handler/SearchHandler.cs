@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using System.Text.RegularExpressions;
 using datastructures_project.Document;
 using datastructures_project.Dto;
 using datastructures_project.HashTables;
@@ -36,12 +37,16 @@ public class SearchHandler
             return Results.BadRequest("q property is required!");
         }
         
+        // Escape HTML characters
+        query = Regex.Replace(query, "<.*?>", string.Empty);
+        
         // Log the request
         logger.LogInformation("Search request received for \"{query}\" query on {timestamp} at {path}",
             query, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"), ctx.Request.Path);
 
         // Perform the search
-        var searchResults = _searchHandler(score[0], tokenizer, documentService, query);
+        var processedTokens = new List<string>();
+        var searchResults = _searchHandler(score[0], tokenizer, documentService, query, out processedTokens);
 
         if (searchResults == null)
         {
@@ -62,6 +67,9 @@ public class SearchHandler
         {
             return Results.Json(new {});
         }
+        
+        // Escape HTML characters
+        query = Regex.Replace(query, "<.*?>", string.Empty);
         
         // Log the request
         logger.LogInformation("Autocomplete request received for \"{query}\" query on {timestamp} at {path}",
@@ -89,6 +97,9 @@ public class SearchHandler
             return Results.BadRequest("q property is required!"); // TODO: error message instead
         }
         
+        // Escape HTML characters
+        query = Regex.Replace(query, "<.*?>", string.Empty);
+        
         var methods = ctx.Request.Query["methods[]"];
 
         // Log the request
@@ -108,6 +119,7 @@ public class SearchHandler
             {"SeparateChaining", 0.0}
         };
         
+        var processedTokens = new List<string>();
         foreach (var score in scores)
         {
             if (methods.Count > 0 && !methods.Contains(score.Tag))
@@ -116,7 +128,7 @@ public class SearchHandler
             }
             
             var timeBefore = DateTime.Now;
-            results[score.Tag] = _searchHandler(score, tokenizer, documentService, query) ?? [];
+            results[score.Tag] = _searchHandler(score, tokenizer, documentService, query, out processedTokens) ?? [];
             elapsedTimes[score.Tag] = (DateTime.Now - timeBefore).TotalMilliseconds;
         }
         
@@ -140,12 +152,13 @@ public class SearchHandler
             {"Title", query + " için Sonuçlar"},
             {"Info", $"\"{query}\" için {documentService.TotalDocumentsCount()} sonuç içinden {results[showResultsOf].Count} sonuç bulundu. Arama süresi: {elapsedTimes[showResultsOf]} ms. Sonuçlar {showResultsOf} veri yapısı kullanılarak gösterildi."},
             {"Results", results[showResultsOf]},
+            {"ProcessedTokens", string.Join(", ", processedTokens)},
             {"PerfResults", elapsedTimes}
         }), "text/html");
     }
 
 
-    public static List<SearchResponseDto>? _searchHandler(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query)
+    public static List<SearchResponseDto>? _searchHandler(IScore score, ITokenizer tokenizer, IDocumentService documentService, string query, out List<string>? processedTokens)
     {
         // Increment the search counter
         searchCounter.Add(1);
@@ -154,11 +167,13 @@ public class SearchHandler
         var tokens = tokenizer.Tokenize(query);
         if (tokens.Count == 0)
         {
+            processedTokens = new List<string>();
             return null;
         }
 
         // Apply levenshtein distance and wildcard search support
         var newTokens = score.Trie.GetTokens(tokens);
+        processedTokens = newTokens;
         
         // Calculate the score
         var termFreqs = score.Calculate(newTokens.ToArray());

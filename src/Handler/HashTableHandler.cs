@@ -17,10 +17,10 @@ public class HashTableHandler
 {
     public static void RegisterHandlers(WebApplication app)
     {
-        app.MapGet("/hashtable/{type}", _testHandler).WithName("hashtable.test");
+        app.MapGet("/hashtable/{type}", _hashtableHandler).WithName("hashtable.index");
     }
     
-    public static IResult _testHandler(HttpContext ctx, IServiceProvider serviceProvider, ScribanTemplateService scribanService)
+    public static IResult _hashtableHandler(HttpContext ctx, IServiceProvider serviceProvider, ScribanTemplateService scribanService)
     {
         var forwardIndexes = serviceProvider.GetService<Dictionary<string, IDictionary<int, HashSet<(string, int)>>>>();
         if (forwardIndexes != null)
@@ -50,6 +50,9 @@ public class HashTableHandler
         {
             return Results.NotFound("Invalid type.");
         }
+        
+        // Escape HTML characters
+        type = System.Net.WebUtility.HtmlEncode(type);
         
         var ht = (ILinearQuadraticDoubleHashing<string, HashSet<(int, int)>>)indexes[type];
         var tombstones = ht.GetTombstones();
@@ -102,6 +105,9 @@ public class HashTableHandler
             return Results.NotFound("Invalid type.");
         }
         
+        // Escape HTML characters
+        type = System.Net.WebUtility.HtmlEncode(type);
+        
         var ht = (ILinearQuadraticDoubleHashing<int, HashSet<(string, int)>>)indexes[type];
         var tombstones = ht.GetTombstones();
         
@@ -147,6 +153,9 @@ public class HashTableHandler
             return Results.NotFound("Invalid type.");
         }
         
+        // Escape HTML characters
+        type = System.Net.WebUtility.HtmlEncode(type);
+        
         var ht = (ISeparateChaining<string, HashSet<(int, int)>>)indexes[type];
         var buckets = ht.GetBuckets();
         
@@ -191,6 +200,9 @@ public class HashTableHandler
         {
             return Results.NotFound("Invalid type.");
         }
+        
+        // Escape HTML characters
+        type = System.Net.WebUtility.HtmlEncode(type);
         
         var ht = (ISeparateChaining<int, HashSet<(string, int)>>)indexes[type];
         var buckets = ht.GetBuckets();
