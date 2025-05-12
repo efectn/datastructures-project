@@ -23,13 +23,12 @@ public class TFIDF: IScore
         _tag = "";
     }
 
-    private double _calculateIdf(string token)
+    private double _calculateIdf(string token, int docsCount)
     {
         var wordDocs = _index.WordDocuments(token);
         if (wordDocs == null) return 0;
         
-        var totalDocs = _index.DocumentCount();
-        var idf = Math.Log((double)totalDocs/(1+wordDocs.Length))+1; // idf smooth normalization
+        var idf = Math.Log((double)docsCount/(1+wordDocs.Length))+1; // idf smooth normalization
 
         return idf;
     }
@@ -42,10 +41,11 @@ public class TFIDF: IScore
     public Dictionary<int, double> Calculate(string[] tokens)
     {
         var termFreqs = new Dictionary<int, double>();
+        var totalDocsCount = _index.DocumentCount();
 
         foreach (var token in tokens)
         {
-            var idf = _calculateIdf(token); 
+            var idf = _calculateIdf(token, totalDocsCount); 
             
             foreach (var (doc, freq) in _index.WordDocuments(token))
             {

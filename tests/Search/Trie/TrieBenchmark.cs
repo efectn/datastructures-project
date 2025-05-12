@@ -66,6 +66,16 @@ public class TrieBenchmark
     }
 
     [Benchmark]
+    public void AddNWords()
+    {
+        var newTrie = new Trie();
+        foreach (var word in _words)
+        {
+            newTrie.AddWord(word);
+        }
+    }
+
+    [Benchmark]
     public bool SearchWord() => _trie.SearchWord(_words[N / 2]);
 
     [Benchmark]

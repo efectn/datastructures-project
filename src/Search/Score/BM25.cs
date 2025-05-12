@@ -29,22 +29,22 @@ public class BM25 : IScore
         _tag = "";
     }
 
-    public double CalculateIDF(string token)
+    public double CalculateIDF(string token, int totalDocs)
     {
         var wordDocs = _index.WordDocuments(token);
         if (wordDocs == null) return 0;
 
-        var totalDocs = _index.DocumentCount();
         return Math.Log((totalDocs - wordDocs.Length + 0.5) / (wordDocs.Length + 0.5) + 1); // +1 for smoothing
     }
 
     public Dictionary<int, double> Calculate(string[] tokens)
     {
         var termFreqs = new Dictionary<int, double>();
+        var totalDocsCount = _index.DocumentCount();
 
         foreach (var token in tokens)
         {
-            var idf = CalculateIDF(token);
+            var idf = CalculateIDF(token, totalDocsCount);
 
             foreach (var (doc, freq) in _index.WordDocuments(token))
             {
