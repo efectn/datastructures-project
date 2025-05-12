@@ -6,6 +6,8 @@ Projenin amacı hashtable fonksiyonları kullanılarak belirli anahtar kelimeler
 
 Ek olarak, sisteme eklenen auto-completion, wildcard arama, levenshtein distance gibi özelliklerde de gerçek hayat senaryolarına uygun bir arama motoru geliştirilmesi sağlanmıştır.
 
+**Demo:** [https://datastructures-project.fly.dev/](https://datastructures-project.fly.dev/)
+
 ## Kullanılan Teknolojiler
 
 - **.NET 9.0:** C# framework'ü ile geliştirilmiştir.
@@ -25,7 +27,7 @@ Ek olarak, sisteme eklenen auto-completion, wildcard arama, levenshtein distance
 
 1. Projenin kök dizininde `docker-compose up` komutu ile konteyner ortamında çalıştırılabilir.
 2. Proje çalıştırıldığında `localhost:8080` adresinden erişilebilir.
-3. Eğer Grafana kullanılmak isteniyorsa docker-compose ile Grafana da çalıştırıldıktan sonra `localhost:3000` adresinden Grafana arayüzüne erişilmelidir (vaesayılan k.adı ve şifre admin:admin)
+3. Eğer Grafana kullanılmak isteniyorsa docker-compose ile Grafana da çalıştırıldıktan sonra `localhost:3000` adresinden Grafana arayüzüne erişilmelidir (varsayılan kullanıcı adı ve şifre admin:admin)
 4. Grafana paneline giriş yapıldıktan `Configuration > Data Sources` menüsünden Prometheus için data source eklenmelidir. (URL'si `prometheus:9090` olacak)
 5. Veri kaynağı eklendikten sonra `Create > Import` menüsünden `grafana_dashboard.json` dosyası yüklenmelidir. Bu sayede projenin kaynak tüketimi, aram sayısı gibi metrikleri grafikler üzerinden görülebilecektir.
 
@@ -199,7 +201,7 @@ Yukarıdaki analizleri doğrulayacak benchmark sonuçları ise şu şekildedir:
 | ForwardIndex_AddRemove            | 1000 | 42.757 us | 3.453 us |  52.402 us | 33.2280 us | 29.8070 us |   643.4 us |    8008 B |
 ```
 
-Benchmark sonuçlarından görülebileceği gibi inverted index algoritması eleman arama işlemlerinde 6 kat daha hızlı çalışırken eleman ekleme işleminde 7 kat, eleman silme işleminde ise 13 kat daha yavaş çalışmaktadır. Bu sonuçlara göre de algoritmaların karmaşıklık hesapları doğrulanmış olmaktadır.ü,
+Benchmark sonuçlarından görülebileceği gibi inverted index algoritması eleman arama işlemlerinde 6 kat daha hızlı çalışırken eleman ekleme işleminde 7 kat, eleman silme işleminde ise 13 kat daha yavaş çalışmaktadır. Bu sonuçlara göre de algoritmaların karmaşıklık hesapları doğrulanmış olmaktadır.
 
 ### Arama Skor Algoritmaları
 
@@ -219,7 +221,7 @@ $$
 - **TF (Term Frequency):** Kelimenin döküman içinde geçme sıklığını ifade eder. Kelimenin döküman içinde kaç kez geçtiği ile hesaplanır. TF, kelimenin döküman içindeki önemini belirler.
 - **IDF (Inverse Document Frequency):** Kelimenin döküman sayısına göre önemini belirler.
 
-TF değeri düz olarak o dökümandaki istenen token sayısının o dökümandaki toplam token sayısına bölümü ile hresaplanacağı gibi logirtmik normalization işlemi yapılarak daha doğru sonuçlar elde edilebilir. Bu amaçla projede kullanılan `k=0.5` normalization değerine sahip TF fonksiyonu şekildeki gibidir:
+TF değeri düz olarak o dökümandaki istenen token sayısının o dökümandaki toplam token sayısına bölümü ile hesaplanacağı gibi logirtmik normalization işlemi yapılarak daha doğru sonuçlar elde edilebilir. Bu amaçla projede kullanılan `k=0.5` normalization değerine sahip TF fonksiyonu şekildeki gibidir:
 
 $$
 TF(t,d) = 0.5 + 0.5 \cdot \frac{f_{t,}}{f_{\max}}
@@ -347,7 +349,7 @@ Projede oluşturduğumuz BM25 yapısına ait metodların algoritmik zaman karma�
 | BM25_Calculate_Single   | 1000 | 642.6 us | 85.70 us | 1,300.7 us | 483.3 us | 374.1 us | 14,279.4 us |   8.22 KB |
 ```
 
-Benchmark sonuçlarından görülebileceği gibi BM25 algoritması TF-IDF algoritmasına göre 1.5 kat daha yavaş çalışmaktadır. Bu sonuçlar, BM25 algoritmasının daha fazla parametre kullanmasından kaynaklanmaktadır. Ancak, BM25 algoritması kullandığı ekstra parametreler sayesinde daha logaritmik, yani daha yavaş büyüyen sonuçlar elde edebilmektedir. Bu nedenle BM25 algoritması, TF-IDF algoritmasına göre daha doğru sonuçlar vermektedir. Aşağıdaki grafik de bunu doğrular şekildedir:
+Benchmark sonuçlarından görülebileceği gibi BM25 algoritması TF-IDF algoritmasına göre 1.5 kat daha yavaş çalışmaktadır. Bu sonuçlar, BM25 algoritmasının daha fazla parametre kullanmasından kaynaklanmaktadır. Ancak, BM25 algoritması kullandığı ekstra parametreler sayesinde daha logaritmik, yani daha dengeli sonuçlar elde edebilmektedir. Bu nedenle BM25 algoritması, TF-IDF algoritmasına göre daha doğru sonuçlar vermektedir. Aşağıdaki grafik de bunu doğrular şekildedir:
 
 ![TF-IDF vs BM25](./images/tfidf-bm25.png)
 
