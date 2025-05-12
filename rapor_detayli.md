@@ -453,8 +453,6 @@ Dizinin sonuna gelinirse başa dönülür (mod işlemi ile).
 | `GetEnumerator`          | O(n)          | O(n)           | Tüm geçerli kayıtları döner                                              |
 | `GetEnumeratorWithIndex` | O(n)          | O(n)           | Her pozisyonu gezip indeksle birlikte döner                              |
 
-
-
 ```sh
 | Method                                       | N     | Mean     | Error    | StdDev    | Median    | Min       | Max        | Allocated |
 |--------------------------------------------- |------ |---------:|---------:|----------:|----------:|----------:|-----------:|----------:|
@@ -595,96 +593,10 @@ Separate Chaining, bir hash table (hash tablosu) çakışmalarını (collision) 
 
 ### AVL Tree
 
-AVL Tree Benchmark Raporu
-Proje: Veri Yapıları - AVL Ağaçları
-Bu proje, AVL ağaçlarıyla ilgili çeşitli performans testlerini içermektedir. BenchmarkDotNet kullanarak AVL ağaçlarının ekleme, arama ve silme işlemlerinin performansını ölçmek için dört temel yöntem üzerinde analiz yapılmıştır. Aşağıdaki metodlar ve her birinin en kötü durum (Worst Case) ve en iyi durum (Best Case) zaman-karışıklığı analizleri verilmiştir:
+AVL ağaçları, ekleme, arama ve silme işlemleri için oldukça verimli bir veri yapısıdır. Bu benchmarklar, AVL ağacının yüksek verimlilikle çalıştığını ve her işlemde O(log N) zaman karmaşıklığına sahip olduğunu göstermektedir. Ekleme ve silme işlemlerinin zaman-karışıklığı, dengeleme rotasyonlarıyla sınırlıdır, ancak yine de O(log N) seviyesindedir. Bu sayede AVL ağaçları, büyük veri setlerinde bile verimli bir şekilde kullanılabilir.
 
-Test Senaryoları
-Benchmark testleri dört temel işlem üzerinden gerçekleştirilmiştir:
 
-Benchmark_AVLTree_TryGetValue: AVL ağacında belirli bir anahtarı aramak.
-
-Benchmark_AVLTree_Add: AVL ağacına öğe eklemek.
-
-Benchmark_AVLTree_ContainsKey: AVL ağacında belirli bir anahtarın varlığını kontrol etmek.
-
-Benchmark_AVLTree_AddRemove: Öğeleri ekleyip silmek.
-
-Zaman Karışıklığı Analizleri
-1. Benchmark_AVLTree_TryGetValue
-Amaç: AVL ağacındaki bir anahtarı aramak ve değerini almak.
-
-En İyi Durum (Best Case):
-
-AVL ağacı dengelidir, bu nedenle arama işlemi yalnızca kök düğümden yapılarak en kısa yolu takip eder.
-
-Zaman Karışıklığı: O(log N).
-
-En Kötü Durum (Worst Case):
-
-Arama, kök düğümden başlayarak en derin düğüme kadar yapılır. AVL ağacı dengesiz olsa bile, her zaman O(log N) karmaşıklığına sahiptir.
-
-Zaman Karışıklığı: O(log N).
-
-2. Benchmark_AVLTree_Add
-Amaç: AVL ağacına öğe eklemek.
-
-En İyi Durum (Best Case):
-
-Yeni öğe, dengeli bir şekilde eklenir ve ağacın yapısını bozmaz.
-
-Zaman Karışıklığı: O(log N).
-
-En Kötü Durum (Worst Case):
-
-Öğenin eklenmesi sırasında dengeleme (rotasyon) yapılması gerekebilir. Bu durumda, her ekleme O(log N) zaman alır.
-
-Zaman Karışıklığı: O(log N).
-
-3. Benchmark_AVLTree_ContainsKey
-Amaç: AVL ağacında bir anahtarın varlığını kontrol etmek.
-
-En İyi Durum (Best Case):
-
-Arama işlemi, kök düğümde bulunan anahtarla yapılır.
-
-Zaman Karışıklığı: O(1).
-
-En Kötü Durum (Worst Case):
-
-Arama işlemi en derin düğüme kadar yapılır, ancak her zaman O(log N) seviyesinde kalır çünkü AVL ağacı dengelidir.
-
-Zaman Karışıklığı: O(log N).
-
-4. Benchmark_AVLTree_AddRemove
-Amaç: AVL ağacına öğe ekleyip ardından öğeleri silmek.
-
-En İyi Durum (Best Case):
-
-Öğeler eklenip silinirken, dengeleme rotasyonları minimumda kalır.
-
-Zaman Karışıklığı: Her ekleme ve silme işlemi O(log N), toplamda O(N log N) olur.
-
-En Kötü Durum (Worst Case):
-
-Silme ve ekleme sırasında ağacın dengelemesi sürekli yapılır, yine de O(log N) seviyesinde işlem yapılır.
-
-Zaman Karışıklığı: O(N log N).
-
-Benchmark Sonuçları
-Bu testlerde, farklı N (1000, 10000) değerleriyle AVL ağacının performansı ölçülmüştür. Her iki durumda da zaman-karışıklığı O(log N) seviyelerinde kalmış ve ekleme, arama ve silme işlemleri verimli bir şekilde gerçekleştirilmiştir. Ayrıca, Add ve Remove işlemleri sırasındaki dengeleme rotasyonları, AVL ağacının zaman-karışıklığını etkilememiştir.
-
-Test Parametreleri:
-Run Strategy: ColdStart
-
-Launch Count: 25
-
-Warmup Count: 2
-
-Benchmark Değerleri:
-Testlerde elde edilen ortalama zamanlar ve karışıklıklar aşağıdaki gibidir:
-
-### Benchmark Değerleri
+**Zaman Karmaşıklık Değerleri:**
 
 | İşlem           | En İyi Durum | En Kötü Durum | Ortalama Süre             |
 |----------------|--------------|---------------|----------------------------|
@@ -692,10 +604,6 @@ Testlerde elde edilen ortalama zamanlar ve karışıklıklar aşağıdaki gibidi
 | Add            | O(log N)     | O(log N)      | 20ms (N=1000), 180ms (N=10000) |
 | ContainsKey    | O(1)         | O(log N)      | 5ms (N=1000), 45ms (N=10000)   |
 | Add + Remove   | O(log N)     | O(log N)      | 50ms (N=1000), 500ms (N=10000) |
-
-
-Sonuçlar
-AVL ağaçları, ekleme, arama ve silme işlemleri için oldukça verimli bir veri yapısıdır. Bu benchmarklar, AVL ağacının yüksek verimlilikle çalıştığını ve her işlemde O(log N) zaman karmaşıklığına sahip olduğunu göstermektedir. Ekleme ve silme işlemlerinin zaman-karışıklığı, dengeleme rotasyonlarıyla sınırlıdır, ancak yine de O(log N) seviyesindedir. Bu sayede AVL ağaçları, büyük veri setlerinde bile verimli bir şekilde kullanılabilir.
 
 ```sh
 | Method                        | N     | Mean       | Error     | StdDev      | Median      | Min         | Max         | Allocated |
@@ -713,19 +621,6 @@ AVL ağaçları, ekleme, arama ve silme işlemleri için oldukça verimli bir ve
 ### Red-Black Tree
 
 Red-Black Tree, her düğümün kırmızı veya siyah olduğu, bazı kurallarla kendini dengeleyen bir ikili arama ağacıdır:
-
-Red-Black Kuralları:
-Her düğüm ya kırmızı ya da siyahtır.
-
-Kök düğüm her zaman siyahtır.
-
-Hiçbir ardışık kırmızı düğüm olamaz (bir kırmızı düğümün çocuğu siyah olmalı).
-
-Her yapraktan (null düğümler dahil) köke giden tüm yollar aynı sayıda siyah düğüm içerir.
-
-Yeni eklenen düğümler kırmızı olarak başlar, ardından ağaç yeniden düzenlenir.
-
-Bu kurallar sayesinde, ağacın yüksekliği O(log n) olarak korunur.
 
 Projede oluşturduğumuz Red-Black Tree yapısına ait metodların algoritmik zaman karmaşıklığı aşağıdaki tablodaki gibidir:
 
@@ -755,14 +650,10 @@ Projede oluşturduğumuz Red-Black Tree yapısına ait metodların algoritmik za
 
 ### B Tree
 B-Tree, özellikle disk tabanlı sistemlerde (veritabanları, dosya sistemleri) yaygın olarak kullanılan çok dallı (multi-way), dengeli (balanced) bir ağaç yapısıdır. B-Tree'nin özellikleri:
-
-Her düğümde birden fazla anahtar ve çocuk bulunabilir.
-
-Yapraklar aynı seviyededir.
-
-Arama, ekleme, silme işlemleri logaritmik zamanda yapılır: O(log n)
-
-Minimum derece t, bir düğümdeki en az t-1, en fazla 2t-1 anahtar sayısını belirler.
+- Her düğümde birden fazla anahtar ve çocuk bulunabilir.
+- Yapraklar aynı seviyededir.
+- Arama, ekleme, silme işlemleri logaritmik zamanda yapılır: O(log n)
+- Minimum derece t, bir düğümdeki en az t-1, en fazla 2t-1 anahtar sayısını belirler.
 
 Projede oluşturduğumuz B-Tree yapısına ait metodların algoritmik zaman karmaşıklığı aşağıdaki tablodaki gibidir:
 
@@ -795,23 +686,6 @@ Projede oluşturduğumuz B-Tree yapısına ait metodların algoritmik zaman karm
 | Benchmark_BTree_Add         | 10000 |  5,583.4 us | 157.18 us | 2,385.6 us | 4,602.2 us | 4,143.4 us | 15,507.3 us | 1389792 B |
 | Benchmark_BTree_ContainsKey | 10000 |  2,955.5 us |  78.74 us | 1,195.1 us | 2,477.7 us | 2,031.5 us |  8,230.2 us |     448 B |
 | Benchmark_BTree_AddRemove   | 10000 | 10,279.4 us | 276.26 us | 4,192.9 us | 8,937.2 us | 7,980.6 us | 31,928.1 us | 1389792 B |
-```
-
-### C#'ın Standart Dictionary Yapısı
-
-**EKLENECEK**
-
-```sh
-| Method                           | N     | Mean      | Error     | StdDev    | Median    | Min       | Max        | Allocated |
-|--------------------------------- |------ |----------:|----------:|----------:|----------:|----------:|-----------:|----------:|
-| Benchmark_Dictionary_TryGetValue | 1000  |  42.43 us |  5.532 us |  83.95 us |  27.59 us |  19.46 us | 1,053.8 us |     736 B |
-| Benchmark_Dictionary_Add         | 1000  | 105.77 us |  5.129 us |  77.84 us | 101.12 us |  33.11 us |   849.6 us |   73904 B |
-| Benchmark_Dictionary_ContainsKey | 1000  |  38.14 us |  4.906 us |  74.46 us |  25.24 us |  18.27 us |   901.2 us |     736 B |
-| Benchmark_Dictionary_AddRemove   | 1000  | 129.61 us | 10.713 us | 162.59 us | 110.09 us |  42.14 us | 2,028.1 us |   73904 B |
-| Benchmark_Dictionary_TryGetValue | 10000 | 198.52 us |  8.360 us | 126.87 us | 175.76 us | 134.04 us | 2,095.8 us |     736 B |
-| Benchmark_Dictionary_Add         | 10000 | 284.92 us |  7.838 us | 118.96 us | 261.85 us | 228.71 us | 1,526.1 us |  673800 B |
-| Benchmark_Dictionary_ContainsKey | 10000 | 199.72 us |  7.628 us | 115.77 us | 177.75 us | 137.02 us | 1,416.8 us |     736 B |
-| Benchmark_Dictionary_AddRemove   | 10000 | 401.20 us | 14.626 us | 221.98 us | 362.79 us | 325.07 us | 3,421.9 us |  673800 B |
 ```
 
 ## Proje için En İdeal IDictionary Yapısı

@@ -1,0 +1,71 @@
+# Todo List
+
+- [x] Create tokenizer.
+    - [x] Add Turkish stemmer support to tokenizer.
+    - [x] Add Turkish stop words to tokenizer.
+    - [x] Create unit-tests for tokenizer.
+- [x] Create indexers.
+    - [x] Add inverted index.
+      - [x] Create unit-tests.
+      - [x] Create benchmarks.
+    - [x] Add forward index.
+      - [x] Create unit-tests.
+      - [x] Create benchmarks.
+    - [x] Store indexed data in SQL or NoSQL database.
+      - [x] Create unit-tests.
+- [x] Add search scoring algorithms.
+  - [x] Implement BM25.
+    - [X] Create unit-tests.
+    - [x] Create benchmarks.
+  - [x] Implement TF-IDF.
+    - [x] Create unit-tests.
+    - [x] Create benchmarks.
+- [x] Add support for Trie data structure.
+  - [x] Implement autocompletion.
+  - [x] Add support for wildcard search queries.
+  - [x] Add unit-tests.
+  - [x] Add benchmarks.
+- [x] Add Levenshtein distance algorithm for word similarity check.
+  - [x] Create unit-tests.
+- [x] Backend & frontend.
+  - [x] Add backend using ASP.NET Core.
+  - [x] Add simple frontend using the files in static directory with Scriban template engine.
+    - [x] Add support for search queries.
+    - [x] Add support for autocompletion.
+    - [x] Add support for adding/removing entries from index.
+  - [x] Add logging support.
+  - [x] Add configuration files.
+  - [x] Prometheus integration for tracing.
+    - [x] Visualise the data with Grafana.
+  - [x] Docker integration.
+- [x] Implement hashtable functions.
+  - [x] Separate chaining.
+  - [x] Linear probing.
+  - [x] Quadratic probing.
+  - [x] Double hashing.
+  - [x] Create unit-tests for all hashtable functions.
+  - [x] Make hashtables selectable on search time with the help of configuartion.
+  - [x] Visualize hashtable content with a simple web page.
+  - [x] Create benchmarks and compare hashtable functions of in terms of performance, cluttering etc.
+  - [x] Add hashtable support to indexers as well as .NET's Dictionary, SortedList implementations and compare them.
+- [x] Implement B-tree for indexers.
+  - [x] Create unit-tests for B-tree.
+  - [x] Create benchmarks and compare B-tree with other hashtable functions.
+- [x] Implement Red black tree for indexers.
+  - [x] Create unit-tests for Red black tree.
+  - [x] Create benchmarks and compare Red black tree with other hashtable functions.
+- [x] Implement AVL tree for indexers.
+  - [x] Create unit-tests for AVL tree.
+  - [x] Create benchmarks and compare AVL tree with other hashtable functions.
+
+# Used Algorithms & Data Structures
+
+- Hashtable
+- Linked List (for linked list implementation of hashtable)
+- Trie
+- B-tree
+- Inverted Index
+- Forward Index
+- BM25
+- TF-IDF
+- Levenshtein distance
