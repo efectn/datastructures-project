@@ -512,7 +512,33 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 
 ### Red-Black Tree
 
-**EKLENECEK**
+Red-Black Tree, her düğümün kırmızı veya siyah olduğu, bazı kurallarla kendini dengeleyen bir ikili arama ağacıdır:
+
+Red-Black Kuralları:
+Her düğüm ya kırmızı ya da siyahtır.
+
+Kök düğüm her zaman siyahtır.
+
+Hiçbir ardışık kırmızı düğüm olamaz (bir kırmızı düğümün çocuğu siyah olmalı).
+
+Her yapraktan (null düğümler dahil) köke giden tüm yollar aynı sayıda siyah düğüm içerir.
+
+Yeni eklenen düğümler kırmızı olarak başlar, ardından ağaç yeniden düzenlenir.
+
+Bu kurallar sayesinde, ağacın yüksekliği O(log n) olarak korunur.
+
+Projede oluşturduğumuz Red-Black Tree yapısına ait metodların algoritmik zaman karmaşıklığı aşağıdaki tablodaki gibidir:
+
+| **Method**                     | **Best Case** | **Worst Case** |
+| ------------------------------ | ------------- | -------------- |
+| `Add`                          | O(log n)      | O(log n)       |
+| `Remove`                       | O(log n)      | O(log n)       |
+| `Search` (Indexer `this[key]`) | O(log n)      | O(log n)       |
+| `ContainsKey`                  | O(log n)      | O(log n)       |
+| `TryGetValue`                  | O(log n)      | O(log n)       |
+| `InOrderTraversal`             | O(n)          | O(n)           |
+| `Keys` / `Values`              | O(n)          | O(n)           |
+
 
 ```sh
 | Method                             | N     | Mean       | Error    | StdDev      | Median     | Min        | Max         | Allocated |
@@ -528,8 +554,35 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 ```
 
 ### B Tree
+B-Tree, özellikle disk tabanlı sistemlerde (veritabanları, dosya sistemleri) yaygın olarak kullanılan çok dallı (multi-way), dengeli (balanced) bir ağaç yapısıdır. B-Tree'nin özellikleri:
 
-**EKLENECEK**
+Her düğümde birden fazla anahtar ve çocuk bulunabilir.
+
+Yapraklar aynı seviyededir.
+
+Arama, ekleme, silme işlemleri logaritmik zamanda yapılır: O(log n)
+
+Minimum derece t, bir düğümdeki en az t-1, en fazla 2t-1 anahtar sayısını belirler.
+
+Projede oluşturduğumuz B-Tree yapısına ait metodların algoritmik zaman karmaşıklığı aşağıdaki tablodaki gibidir:
+
+| **Method**        | **Best Case** | **Worst Case** |
+| ----------------- | ------------- | -------------- |
+| `Add`             | O(1)          | O(log n)       |
+| `InsertNonFull`   | O(1)          | O(log n)       |
+| `SplitChild`      | O(t)          | O(t)           |
+| `TryGetValue`     | O(1)          | O(log n)       |
+| `ContainsKey`     | O(1)          | O(log n)       |
+| `Remove`          | O(log n)      | O(log n)       |
+| `this[key]` (get) | O(1)          | O(log n)       |
+| `this[key]` (set) | O(log n)      | O(log n)       |
+| `Clear`           | O(1)          | O(1)           |
+| `Contains`        | O(1)          | O(log n)       |
+| `CopyTo`          | O(n)          | O(n)           |
+| `GetEnumerator`   | O(n)          | O(n)           |
+| `Traverse`        | O(n)          | O(n)           |
+| `Keys / Values`   | O(n)          | O(n)           |
+
 
 ```sh
 | Method                      | N     | Mean        | Error     | StdDev     | Median     | Min        | Max         | Allocated |
