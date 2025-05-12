@@ -1,6 +1,6 @@
 <main>
     <!-- Sağ üstte sabitlenmiş performans süresi tablosu -->
-   <div class="performance-metrics" style="position: fixed; top: 20px; right: 20px; background: #f9f9f9; padding: 12px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); font-family: Arial, sans-serif; font-size: 14px; z-index: 1000;">
+   <div class="performance-metrics" style="position: fixed; top: 65px; right: 20px; background: #f9f9f9; padding: 12px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); font-family: Arial, sans-serif; font-size: 14px; z-index: 1000;">
     <h4 style="margin-top: 0; font-size: 16px; text-align: center;">Arama Süreleri (ms)</h4>
     <table style="width: 100%;">
         {{ for item in PerfResults }}
@@ -27,8 +27,9 @@
 
         {{ for result in Results }}
             <div class="result-item">
-                <h3 class="result-title">{{ result.title }}</h3>
-                <div class="result-url"><a href="{{ result.url }}">{{ result.url }}</a></div>
+                <a href="{{result.url}}" style="text-decoration: none;"  target="_blank"><h3 class="result-title">{{ result.title }}</h3></a>
+                
+                <div class="result-url"><a href="{{ result.url }}" target="_blank">{{ result.url }}</a></div>
                 <p class="result-snippet">
                     {{ result.description }}
                     <br>
