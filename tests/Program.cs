@@ -23,8 +23,8 @@ BenchmarkRunner.Run<TFIDFBenchmark>();
 Console.WriteLine("Linear Probing Hash Table Benchmarks:");
 BenchmarkRunner.Run<LinearProbingHashTableBenchmark>();
 
-Console.WriteLine("Double Hashing Hash Table Benchmarks:");
-BenchmarkRunner.Run<DoubleHashingHashTableBenchmark>();
+Console.WriteLine("Quadratic Probing Hash Table Benchmarks:");
+BenchmarkRunner.Run<QuadraticProbingHashTableBenchmark>();
 
 Console.WriteLine("Separate Chaining Hash Table Benchmarks:");
 BenchmarkRunner.Run<SeparateChainingHashTableBenchmark>();
