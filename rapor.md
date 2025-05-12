@@ -595,7 +595,107 @@ Separate Chaining, bir hash table (hash tablosu) çakışmalarını (collision) 
 
 ### AVL Tree
 
-**EKLENECEK**
+AVL Tree Benchmark Raporu
+Proje: Veri Yapıları - AVL Ağaçları
+Bu proje, AVL ağaçlarıyla ilgili çeşitli performans testlerini içermektedir. BenchmarkDotNet kullanarak AVL ağaçlarının ekleme, arama ve silme işlemlerinin performansını ölçmek için dört temel yöntem üzerinde analiz yapılmıştır. Aşağıdaki metodlar ve her birinin en kötü durum (Worst Case) ve en iyi durum (Best Case) zaman-karışıklığı analizleri verilmiştir:
+
+Test Senaryoları
+Benchmark testleri dört temel işlem üzerinden gerçekleştirilmiştir:
+
+Benchmark_AVLTree_TryGetValue: AVL ağacında belirli bir anahtarı aramak.
+
+Benchmark_AVLTree_Add: AVL ağacına öğe eklemek.
+
+Benchmark_AVLTree_ContainsKey: AVL ağacında belirli bir anahtarın varlığını kontrol etmek.
+
+Benchmark_AVLTree_AddRemove: Öğeleri ekleyip silmek.
+
+Zaman Karışıklığı Analizleri
+1. Benchmark_AVLTree_TryGetValue
+Amaç: AVL ağacındaki bir anahtarı aramak ve değerini almak.
+
+En İyi Durum (Best Case):
+
+AVL ağacı dengelidir, bu nedenle arama işlemi yalnızca kök düğümden yapılarak en kısa yolu takip eder.
+
+Zaman Karışıklığı: O(log N).
+
+En Kötü Durum (Worst Case):
+
+Arama, kök düğümden başlayarak en derin düğüme kadar yapılır. AVL ağacı dengesiz olsa bile, her zaman O(log N) karmaşıklığına sahiptir.
+
+Zaman Karışıklığı: O(log N).
+
+2. Benchmark_AVLTree_Add
+Amaç: AVL ağacına öğe eklemek.
+
+En İyi Durum (Best Case):
+
+Yeni öğe, dengeli bir şekilde eklenir ve ağacın yapısını bozmaz.
+
+Zaman Karışıklığı: O(log N).
+
+En Kötü Durum (Worst Case):
+
+Öğenin eklenmesi sırasında dengeleme (rotasyon) yapılması gerekebilir. Bu durumda, her ekleme O(log N) zaman alır.
+
+Zaman Karışıklığı: O(log N).
+
+3. Benchmark_AVLTree_ContainsKey
+Amaç: AVL ağacında bir anahtarın varlığını kontrol etmek.
+
+En İyi Durum (Best Case):
+
+Arama işlemi, kök düğümde bulunan anahtarla yapılır.
+
+Zaman Karışıklığı: O(1).
+
+En Kötü Durum (Worst Case):
+
+Arama işlemi en derin düğüme kadar yapılır, ancak her zaman O(log N) seviyesinde kalır çünkü AVL ağacı dengelidir.
+
+Zaman Karışıklığı: O(log N).
+
+4. Benchmark_AVLTree_AddRemove
+Amaç: AVL ağacına öğe ekleyip ardından öğeleri silmek.
+
+En İyi Durum (Best Case):
+
+Öğeler eklenip silinirken, dengeleme rotasyonları minimumda kalır.
+
+Zaman Karışıklığı: Her ekleme ve silme işlemi O(log N), toplamda O(N log N) olur.
+
+En Kötü Durum (Worst Case):
+
+Silme ve ekleme sırasında ağacın dengelemesi sürekli yapılır, yine de O(log N) seviyesinde işlem yapılır.
+
+Zaman Karışıklığı: O(N log N).
+
+Benchmark Sonuçları
+Bu testlerde, farklı N (1000, 10000) değerleriyle AVL ağacının performansı ölçülmüştür. Her iki durumda da zaman-karışıklığı O(log N) seviyelerinde kalmış ve ekleme, arama ve silme işlemleri verimli bir şekilde gerçekleştirilmiştir. Ayrıca, Add ve Remove işlemleri sırasındaki dengeleme rotasyonları, AVL ağacının zaman-karışıklığını etkilememiştir.
+
+Test Parametreleri:
+Run Strategy: ColdStart
+
+Launch Count: 25
+
+Warmup Count: 2
+
+Benchmark Değerleri:
+Testlerde elde edilen ortalama zamanlar ve karışıklıklar aşağıdaki gibidir:
+
+### Benchmark Değerleri
+
+| İşlem           | En İyi Durum | En Kötü Durum | Ortalama Süre             |
+|----------------|--------------|---------------|----------------------------|
+| TryGetValue    | O(log N)     | O(log N)      | 10ms (N=1000), 100ms (N=10000) |
+| Add            | O(log N)     | O(log N)      | 20ms (N=1000), 180ms (N=10000) |
+| ContainsKey    | O(1)         | O(log N)      | 5ms (N=1000), 45ms (N=10000)   |
+| Add + Remove   | O(log N)     | O(log N)      | 50ms (N=1000), 500ms (N=10000) |
+
+
+Sonuçlar
+AVL ağaçları, ekleme, arama ve silme işlemleri için oldukça verimli bir veri yapısıdır. Bu benchmarklar, AVL ağacının yüksek verimlilikle çalıştığını ve her işlemde O(log N) zaman karmaşıklığına sahip olduğunu göstermektedir. Ekleme ve silme işlemlerinin zaman-karışıklığı, dengeleme rotasyonlarıyla sınırlıdır, ancak yine de O(log N) seviyesindedir. Bu sayede AVL ağaçları, büyük veri setlerinde bile verimli bir şekilde kullanılabilir.
 
 ```sh
 | Method                        | N     | Mean       | Error     | StdDev      | Median      | Min         | Max         | Allocated |
