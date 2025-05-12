@@ -427,7 +427,33 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 
 ### Linear Probing Hash Table
 
-**EKLENECEK**
+Lineer probing, açık adresleme (open addressing) yöntemlerinden biridir. Bir anahtarın (key) hash değeri hesaplandıktan sonra:
+
+İlgili indeks boşsa, anahtar o hücreye yerleştirilir.
+Doluysa, bir sonraki hücreye (index + 1) bakılır.
+Bu arama, boş bir hücre bulunana kadar lineer olarak devam eder.
+Dizinin sonuna gelinirse başa dönülür (mod işlemi ile).
+
+Çakışmaları (collisions) çözmenin basit ama etkili bir yoludur.
+
+
+| **Metot**                | **Best Case** | **Worst Case** | **Açıklama**                                                             |
+| ------------------------ | ------------- | -------------- | ------------------------------------------------------------------------ |
+| `Add` / `Insert`         | O(1)          | O(n)           | Hash yeri boşsa O(1), çakışmalarla tüm tablo dolaşılabilir               |
+| `TryGetValue`            | O(1)          | O(n)           | Anahtar ilk pozisyondaysa hızlı erişim, aksi halde tüm tablo gezilebilir |
+| `ContainsKey`            | O(1)          | O(n)           | `TryGetValue` çağrısı üzerinden                                          |
+| `Remove`                 | O(1)          | O(n)           | Anahtar yakınsa hızlı, değilse uzun arama gerekir                        |
+| `this[key] get`          | O(1)          | O(n)           | İçeride `TryGetValue` çağrısı var                                        |
+| `this[key] set`          | O(1)          | O(n)           | Anahtar varsa güncelleme, yoksa `Add` ile ekleme yapılır                 |
+| `Keys` / `Values`        | O(n)          | O(n)           | Tüm tabloyu tarayarak geçerli girişleri toplar                           |
+| `Clear`                  | O(n)          | O(n)           | Yeni boş tablo oluşturulur                                               |
+| `CopyTo`                 | O(n)          | O(n)           | Tüm anahtar-değer çiftlerini hedef diziye kopyalar                       |
+| `IsInCollide`            | O(1)          | O(n)           | İlk pozisyonda değilse çakışma kabul edilir                              |
+| `GetTombstones`          | O(n)          | O(n)           | Tüm tabloda tombstone (silinmiş) girişleri bulur                         |
+| `GetEnumerator`          | O(n)          | O(n)           | Tüm geçerli kayıtları döner                                              |
+| `GetEnumeratorWithIndex` | O(n)          | O(n)           | Her pozisyonu gezip indeksle birlikte döner                              |
+
+
 
 ```sh
 | Method                                       | N     | Mean     | Error    | StdDev    | Median    | Min       | Max        | Allocated |
@@ -444,7 +470,44 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 
 ### Quadratic Probing Hash Table
 
-**EKLENECEK**
+Quadratic Probing (Karesel Sondalama), açık adreslemeli (open addressing) hash tablolarında çakışmaları çözmek için kullanılan bir yöntemdir. Lineer probing'deki gibi sırayla bir sonraki hücreye değil, artan karesel aralıklarla tabloya bakılır.
+
+Index_i = (h(key) + c₁ * i + c₂ * i²) mod TableSize
+
+
+Varsayılan olarak: `c₁ = 0`, `c₂ = 1` seçilirse:
+
+
+h(key), h(key) + 1², h(key) + 2², h(key) + 3², ...
+
+Quadratic Probing Hash Table - Zaman Karmaşıklığı
+
+| Metot/Fonksiyon               | Best Case        | Average Case                | Worst Case                 | Açıklama |
+|------------------------------|------------------|-----------------------------|----------------------------|----------|
+| `Add(TKey key, TValue val)`  | O(1)             | O(1 / (1 - α))              | O(n)                       | İlk denemede boş slot varsa hızlı. Çakışma varsa kare artışla ilerlenir. |
+| `InsertWithoutResize(...)`   | O(1)             | O(1 / (1 - α))              | O(n)                       | `Add` gibi çalışır, ancak `Resize` yapılmaz. |
+| `TryGetValue(TKey key)`      | O(1)             | O(1 / (1 - α))              | O(n)                       | Aranan anahtar ilk slottaysa çok hızlı. |
+| `ContainsKey(TKey key)`      | O(1)             | O(1 / (1 - α))              | O(n)                       | `TryGetValue` çağırır. |
+| `Remove(TKey key)`           | O(1)             | O(1 / (1 - α))              | O(n)                       | Anahtar erken bulunursa hızlı. |
+| `this[TKey key]` (get)       | O(1)             | O(1 / (1 - α))              | O(n)                       | `TryGetValue` çağırır. |
+| `this[TKey key]` (set)       | O(1)             | O(1 / (1 - α))              | O(n)                       | Anahtar varsa günceller, yoksa ekler. |
+| `Clear()`                    | O(n)             | O(n)                        | O(n)                       | Tüm tabloyu sıfırlar. |
+| `CopyTo(...)`                | O(n)             | O(n)                        | O(n)                       | Tüm geçerli elemanlar başka diziye kopyalanır. |
+| `GetEnumerator()`            | O(n)             | O(n)                        | O(n)                       | Tablonun tamamı üzerinde gezinir. |
+| `GetEnumeratorWithIndex()`   | O(n)             | O(n)                        | O(n)                       | Hem indeks hem veri verilir. |
+| `GetTombstones()`            | O(n)             | O(n)                        | O(n)                       | Silinmiş (tombstone) girişleri listeler. |
+| `Resize()`                   | —                | O(n)                        | O(n)                       | Tüm tablo yeniden yerleştirilir. |
+| `IsInCollide(TKey key)`      | O(1)             | O(1 / (1 - α))              | O(n)                       | Anahtar çakışma sonucu yerleşmiş mi diye kontrol eder. |
+| `GetNextPrime(int)`          | O(1)~O(√n)       | O(√n)                       | O(√n)                      | Yeni tablo boyutu seçilirken asal kontrol yapılır. |
+| `IsPrime(int)`              | O(1)~O(√n)       | O(√n)                       | O(√n)                      | Asal sayı kontrolü yapılır. |
+
+> **Notlar**:
+> - `α`: Load factor (doluluk oranı) — `_count / _size`
+> - `O(1 / (1 - α))`: Ortalama karmaşıklık, yük faktörü arttıkça yavaşlar.
+> - `Resize()` işlemi amortize edilmiştir ve nadiren çağrılır.
+
+
+
 
 ```sh
 | Method                                          | N     | Mean     | Error    | StdDev   | Median    | Min       | Max        | Allocated |
@@ -461,7 +524,29 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 
 ### Double Hashing Hash Table
 
-**EKLENECEK**
+Double Hashing Hash Table (Çift Hashleme ile Açık Adresleme), çakışmaları çözmek için kullanılan bir açık adresleme (open addressing) yöntemidir. Temel fikir, ikinci bir bağımsız hash fonksiyonu kullanarak çakışma durumunda alternatif adresler üretmektir.
+
+Double Hashing, çakışma durumunda yeni adresi şu şekilde hesaplar:
+index = (anaHash(key) + i * yardımcıHash(key)) % tableSize
+
+Bu yöntem, birbirinden bağımsız iki hash fonksiyonu kullanarak daha geniş ve eşit dağılmış bir arama dizisi oluşturur. Bu da kümeleşmeyi azaltır (quadratic ve linear probing'e göre daha az clustering olur).
+
+| Fonksiyon       | Best Case | Average Case     | Worst Case | Açıklama                                                                        |
+| --------------- | --------- | ---------------- | ---------- | ------------------------------------------------------------------------------- |
+| `Add`           | O(1)      | O(1) \~ O(log n) | O(n)       | Boş veya düşük dolulukta tablo hızlı ekler; yüksek dolulukta çarpışmalar artar. |
+| `TryGetValue`   | O(1)      | O(1) \~ O(log n) | O(n)       | Çakışma yoksa direkt bulur; çakışmalar varsa tüm tabloyu tarayabilir.           |
+| `Remove`        | O(1)      | O(1) \~ O(log n) | O(n)       | Aynı `TryGetValue` gibi işleyip siler (tombstone bırakır).                      |
+| `ContainsKey`   | O(1)      | O(1) \~ O(log n) | O(n)       | `TryGetValue`’ı çağırır.                                                        |
+| `Resize`        | –         | –                | O(n)       | Tablonun yeniden boyutlanması; tüm elemanları yeniden ekler.                    |
+| `IsInCollide`   | O(1)      | O(1) \~ O(log n) | O(n)       | Anahtarın çakışmaya girip girmediğini belirlemek için tarama yapar.             |
+| `this[key] get` | O(1)      | O(1) \~ O(log n) | O(n)       | `TryGetValue` gibi çalışır.                                                     |
+| `this[key] set` | O(1)      | O(1) \~ O(log n) | O(n)       | Varsa günceller, yoksa `Add` eder.                                              |
+| `Clear`         | O(n)      | O(n)             | O(n)       | Tüm diziyi temizler.                                                            |
+| `Keys / Values` | O(n)      | O(n)             | O(n)       | Tüm diziyi tarayıp anahtarları/değerleri döndürür.                              |
+| `CopyTo`        | O(n)      | O(n)             | O(n)       | Aktif girişleri kopyalamak için tabloyu tarar.                                  |
+| `GetEnumerator` | O(n)      | O(n)             | O(n)       | Yine tüm aktif girişleri döner.                                                 |
+
+
 
 ```sh
 | Method                              | N     | Mean       | Error    | StdDev      | Median     | Min       | Max        | Allocated |
@@ -478,7 +563,22 @@ Arama mekanizmasının indexleme kısmında aşağıdaki veri yapıları kullan�
 
 ### Separate Chaining Hash Table
 
-**EKLENECEK**
+Separate Chaining, bir hash table (hash tablosu) çakışmalarını (collision) çözmek için kullanılan bir yöntemdir. Bu yöntemde, hash fonksiyonu ile belirli bir anahtar (key) bir dizin (index) konumuna hashlenir. Ancak, aynı dizine birden fazla anahtar hashlenirse, her anahtar için bir bağlantılı liste (linked list) veya başka bir veri yapısı oluşturulur.
+
+Separate Chaining, bir hash table (hash tablosu) çakışmalarını (collision) çözmek için kullanılan bir yöntemdir. Bu yöntemde, hash fonksiyonu ile belirli bir anahtar (key) bir dizin (index) konumuna hashlenir. Ancak, aynı dizine birden fazla anahtar hashlenirse, her anahtar için bir bağlantılı liste (linked list) veya başka bir veri yapısı oluşturulur.
+
+Örnek: Index 5: [ (key1, value1) -> (key2, value2) ]
+
+| Fonksiyon                     | Best Case Time Complexity | Worst Case Time Complexity |
+| ----------------------------- | ------------------------- | -------------------------- |
+| **Add**                       | O(1)                      | O(n)                       |
+| **TryGetValue**               | O(1)                      | O(n)                       |
+| **ContainsKey**               | O(1)                      | O(n)                       |
+| **Remove**                    | O(1)                      | O(n)                       |
+| **Indexer (this\[TKey key])** | O(1)                      | O(n)                       |
+| **Clear**                     | O(n)                      | O(n)                       |
+| **Resize**                    | O(n)                      | O(n)                       |
+| **GetEnumerator**             | O(n)                      | O(n)                       |
 
 ```sh
 | Method                                          | N     | Mean        | Error     | StdDev    | Median      | Min         | Max         | Allocated |
